@@ -42,17 +42,23 @@ done
 counter=0
 for f in $QUORN/filtered/*.gz
 do
-	counter=$((counter+1))
-	if (( $counter % 2 == 0 )) 
-	then
-		R2=$f
-		$QUORN/scripts/tophat.sh $R1 $R2 REF 200 400
-	fi
-	R1=$f
+    counter=$((counter+1))
+    if (( $counter % 2 == 0 )) 
+    then
+        R2=$f
+        $QUORN/scripts/tophat.sh $R1 $R2 REF 200 400
+    fi
+    R1=$f
 done
 ```
 ## Cufflinks
-
+second argument to cufflinks.sh is no. processors
+```shell
+for f in $QUORN/tophat/*.gz
+do
+	$QUORN/scripts/cufflinks.sh $f 8
+done
+```
 ## Cuffmerge
 
 ## Cuffquant
