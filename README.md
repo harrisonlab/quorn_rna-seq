@@ -16,16 +16,41 @@ do
 	if (( $counter % 2 == 0 )) 
 	then
 		R2=$f
-		$QUORN/scripts/trim.sh $R1 $R2 $OUT $QUORN/scripts 25 150
+		$QUORN/scripts/trim.sh $R1 $R2 $QUORN/scripts 25 150
 	fi
 	R1=$f
 done
 ```
 
 ## Filter data
-
-## Align to ref with Tophat
-
+```shell
+counter=0
+for f in $QUORN/trimmed/*.gz
+do
+	counter=$((counter+1))
+	if (( $counter % 2 == 0 )) 
+	then
+		R2=$f
+		$QUORN/scripts/bowtie.sh $R1 $R2 $QUORN/filtered/phix/phix $QUORN/filtered 200 400
+	fi
+	R1=$f
+done
+```
+## Align to ref with Tophat 
+(maybe update to Hisat2, or Tophat3 if it ever emerges)
+```shell
+counter=0
+for f in $QUORN/trimmed/*.gz
+do
+	counter=$((counter+1))
+	if (( $counter % 2 == 0 )) 
+	then
+		R2=$f
+		$QUORN/scripts/tophat.sh $R1 $R2 $QUORN/filtered/phix/phix $QUORN/filtered 200 400
+	fi
+	R1=$f
+done
+```
 ## Cufflinks
 
 ## Cuffmerge
