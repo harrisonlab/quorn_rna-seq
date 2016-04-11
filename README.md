@@ -37,7 +37,7 @@ do
 done
 ```
 ## Align to ref with Tophat 
-(maybe update to Hisat2, or Tophat3 if it ever emerges)
+(maybe update to Hisat2/Tophat3 (when available))
 ```shell
 counter=0
 for f in $QUORN/trimmed/*.gz
