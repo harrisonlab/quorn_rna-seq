@@ -8,4 +8,4 @@ TRIMLOC=$3
 QUALITY=$4
 MINLEN=$5
 
-		qsub $SCRIPT_DIR/submit_trim.sh $R1 $R2 $OUT $TRIMLOC $QUALITY $MINLEN
+		qsub $SCRIPT_DIR/submit_trim.sh $R1 $R2 $TRIMLOC $QUALITY $MINLEN
