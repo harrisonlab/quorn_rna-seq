@@ -40,13 +40,13 @@ done
 (maybe update to Hisat2/Tophat3 (when available))
 ```shell
 counter=0
-for f in $QUORN/trimmed/*.gz
+for f in $QUORN/filtered/*.gz
 do
 	counter=$((counter+1))
 	if (( $counter % 2 == 0 )) 
 	then
 		R2=$f
-		$QUORN/scripts/tophat.sh $R1 $R2 $QUORN/filtered/phix/phix $QUORN/filtered 200 400
+		$QUORN/scripts/tophat.sh $R1 $R2 REF 200 400
 	fi
 	R1=$f
 done
