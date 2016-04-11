@@ -16,7 +16,7 @@ do
 	if (( $counter % 2 == 0 )) 
 	then
 		R2=$f
-		$QUORN/scripts/trim.sh $R1 $R2 $OUT $QUORN/scripts 25 100
+		$QUORN/scripts/trim.sh $R1 $R2 $OUT $QUORN/scripts 25 150
 	fi
 	R1=$f
 done
