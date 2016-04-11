@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#Cufflinks
+#$ -S /bin/bash
+#$ -cwd
+#$ -l virtual_free=8G
+
+BAM=$1
+PROC=$2
+
+echo "Running cufflinks with $BAM on $PROC proccessors"
+
+cufflinks $BAM -p $PROC
+
