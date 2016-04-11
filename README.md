@@ -53,6 +53,8 @@ done
 ```
 ## Cufflinks
 second argument to cufflinks.sh is no. processors
+
+This will need editing or cufflinks will output the same file name multiple times.... 
 ```shell
 for f in $QUORN/tophat/*.gz
 do
