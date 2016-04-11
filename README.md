@@ -10,7 +10,7 @@ Trimming was performed with Trimmomatic (trim.sh, submit_trim.sh and illumina_fu
 
 ```shell
 counter=0
-for f in $QUORN/raw_rna/*
+for f in $QUORN/raw_rna/*.gz
 do
 	counter=$((counter+1))
 	if (( $counter % 2 == 0 )) 
