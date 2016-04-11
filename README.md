@@ -1,6 +1,7 @@
 # quorn_rna-seq
 
 ## Trim data
+Trimming was performed with Trimmomatic 
 
 ## Filter data
 
