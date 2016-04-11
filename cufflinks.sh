@@ -2,9 +2,6 @@
 
 SCRIPT_DIR=$(readlink -f ${0%/*})
 BAM=$1
-OUT=$2
-PROC=$3
+PROC=$2
 
-
-
-qsub $SCRIPT_DIR/submit_cufflinks.sh $BAM $OUT $PROC
+qsub $SCRIPT_DIR/submit_cufflinks.sh $BAM $PROC
