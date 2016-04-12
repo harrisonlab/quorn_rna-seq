@@ -6,7 +6,7 @@ QUORN=~/projects/quorn
 ```
 
 ## Trim data
-Trimming was performed with Trimmomatic (trim.sh, submit_trim.sh and illumina_full_adapters.fa should all be in same directory)
+Trimming was performed with Trimmomatic (trim.sh, submit_trim.sh and truseq.fa should all be in same directory)
 
 ```shell
 counter=0
