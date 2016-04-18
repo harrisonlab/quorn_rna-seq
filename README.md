@@ -7,6 +7,8 @@ QUORN=~/projects/quorn
 
 ## Trim data
 Trimming was performed with Trimmomatic (trim.sh, submit_trim.sh and truseq.fa should all be in same directory)
+Around 25% - 30% of reverse reads were discarded due to adapter contamination. Trimmomatic was set to capture (rather than dump) unpaired forward reads. SE workflow to follow...
+
 
 ```shell
 counter=0
@@ -16,7 +18,7 @@ do
 	if (( $counter % 2 == 0 )) 
 	then
 		R2=$f
-		$QUORN/scripts/trim.sh $R1 $R2 $QUORN/scripts 25 150
+		$QUORN/scripts/trim.sh $R1 $R2 $QUORN/scripts 20 50
 	fi
 	R1=$f
 done
