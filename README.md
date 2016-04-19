@@ -39,25 +39,12 @@ do
 	R1=$f
 done
 ```
-The output files all have the same name (under the $S folder)
-These can be changed back to something like their original names e.g. $S_R1.fq.gz and $S_R2.fq.gz
-
-```shell
-cd $QUORN/filtered
-
-for d in *
- do
-	mv $d/*R1* ${d}_R1.fq.gz
-	mv $d/*R2* ${d}_R2.fq.gz
- done
- ```
-
 
 ## Align to ref with Tophat 
 (maybe update to Hisat2/Tophat3 (when available))
 ```shell
 counter=0
-for f in $QUORN/filtered/*.gz
+for f in $QUORN/filtered/*.*
 do
     counter=$((counter+1))
     if (( $counter % 2 == 0 )) 
