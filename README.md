@@ -33,6 +33,7 @@ do
 	if (( $counter % 2 == 0 )) 
 	then
 		R2=$f
+		S=$(echo $f|awk -F"_" '{print $1,$2,$3}' OFS="_")
 		$QUORN/scripts/bowtie.sh $R1 $R2 $QUORN/filtered/phix/phix $QUORN/filtered 200 400
 	fi
 	R1=$f
