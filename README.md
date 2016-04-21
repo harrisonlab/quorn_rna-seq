@@ -50,7 +50,7 @@ do
     if (( $counter % 2 == 0 )) 
     then
         R2=$f
-        $QUORN/scripts/tophat.sh $R1 $R2 $QUORn/ref/venenatum 200 400
+        $QUORN/scripts/tophat.sh $R1 $R2 $QUORN/ref/venenatum 200 400
     fi
     R1=$f
 done
