@@ -48,7 +48,7 @@ Unpaired reads can be added to the tophat workflow
 for f in ../filtered/*[1].fq; 
 do 
 	S=$(echo $f|awk -F"/" '{print $NF}'|awk -F"." '{print $1}')
-	echo $QUORN/scripts/tophat.sh ${S}.1.fq ${S}.2.fq ${S}_SE.fq $S $QUORN/ref/venenatum 200 400  
+	$QUORN/scripts/tophat.sh $QUORN/filtered/${S}.1.fq $QUORN/filtered/${S}.2.fq $QUORN/filtered/${S}_1_SE.fq $QUORN/ref/venenatum $QUORN/filtered/$S 200 400  
 done
 
 ```
