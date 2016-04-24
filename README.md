@@ -42,18 +42,15 @@ done
 
 ## Align to ref with Tophat 
 (maybe update to Hisat2/Tophat3 (when available))
+Unpaired reads can be added to the tophat workflow
 ```shell
-counter=0
-for f in $QUORN/filtered/*.*
-do
-    counter=$((counter+1))
-    if (( $counter % 2 == 0 )) 
-    then
-        R2=$f
-        $QUORN/scripts/tophat.sh $R1 $R2 $QUORN/ref/venenatum 200 400
-    fi
-    R1=$f
+
+for f in ../filtered/*[1].fq; 
+do 
+	S=$(echo $f|awk -F"/" '{print $NF}'|awk -F"." '{print $1}')
+	echo $QUORN/scripts/tophat.sh ${S}.1.fq ${S}.2.fq ${S}_SE.fq $S $QUORN/ref/venenatum 200 400  
 done
+
 ```
 ## Cufflinks
 second argument to cufflinks.sh is no. processors
