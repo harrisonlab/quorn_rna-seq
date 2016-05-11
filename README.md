@@ -52,6 +52,13 @@ do
 done
 
 ```
+
+## DESeq2 analysis
+Using braker gene models (cufflinks is still running after a couple of weeks)
+
+The method in dge_deseq.R was followed to produce list of diffrentially expressed braker gene models.
+
+
 ## Cufflinks
 second argument to cufflinks.sh is no. processors
 
