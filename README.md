@@ -59,7 +59,9 @@ Using braker gene models (cufflinks is still running after a couple of weeks)
 The method in dge_deseq.R was followed to produce list of diffrentially expressed braker gene models.
 
 
-## Cufflinks
+##Not implemented
+
+### Cufflinks
 second argument to cufflinks.sh is no. processors
 
 This will need editing or cufflinks will output the same file name multiple times.... 
@@ -69,8 +71,3 @@ do
 	$QUORN/scripts/cufflinks.sh $f 8
 done
 ```
-## Cuffmerge
-
-## Cuffquant
-
-## Cuffdiff
