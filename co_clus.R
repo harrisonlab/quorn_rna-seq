@@ -1,3 +1,5 @@
+library(sqldf)
+
 res2 <- res.2
 res3 <- res.3
 res4 <- res.4
@@ -6,6 +8,7 @@ res6 <- res.6
 res7 <- res.7
 res8 <- res.8
 
+# perform multiple joins with sqldf is easier than with merge (proably could do the same with plyr which is faster than sqldf, but I don't know the syntax)
 all_results <- sqldf("
 	select 
 		r2.log2FoldChange as r2_FC,
@@ -32,6 +35,7 @@ all_results <- sqldf("
    , row.names=T
 )
 
+# find genes which are differentially expressed in at least one condition (FC>2, p<=.05)
 all_results$test <- apply(all_results,1,function(x) {
 	as.logical(sum(
 		sqrt(x[1]^2)>1&x[8]<=0.05,
@@ -74,11 +78,10 @@ cut_off_7 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3
 cut_off_8 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),22:24])),.95)
 
 
-
-
-slide_window(X,winsize=3) {
-	
-
+get_seeds <- function(X,cut_off,sig) {
+	if(sum(sig)<=1) {return(FALSE)}	
+	if(p_corr(X)>cut_off) {return(TRUE)}
+	return(FALSE)
 }
 
 
