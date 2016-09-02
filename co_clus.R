@@ -55,19 +55,31 @@ p_corr <- function(X) {
 	sum(t1,na.rm=T)/nrow(X)
 }
 
-## 1. get random set of three genes, 
-## 2. find average correlation
-## 3. replicate 1000 times
-## 4. get 95th quantile
-quantile(#4
+## 1. get random set of three genes, 2. find average correlation 3. replicate 1000 times 4. get 95th quantile
+cut_off_1 <-quantile(#4
 	replicate(#3
 		1000,
 		p_corr( #2 
-			myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),] #1 
+			myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),1:3] #1 
 			)
 		)
 	,.95
 )
+cut_off_2 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),4:6])),.95)
+cut_off_3 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),7:9])),.95)
+cut_off_4 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),10:12])),.95)
+cut_off_5 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),13:15])),.95)
+cut_off_6 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),16:18])),.95)
+cut_off_7 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),19:21])),.95)
+cut_off_8 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),22:24])),.95)
+
+
+
+
+slide_window(X,winsize=3) {
+	
+
+}
 
 
 ### this is all cool, but it didn't do what I wanted...
