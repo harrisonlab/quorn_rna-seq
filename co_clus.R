@@ -44,3 +44,58 @@ all_results$test <- apply(all_results,1,function(x) {
 	   )) 
 	}
 )
+
+myfpkm <- myfpkm[,c(1,9,17,2,10,18,3,11,19,4,12,20,5,13,21,6,14,22,7,15,23,8,16,24)]
+
+## calculate pearson corr matrix and return the mean value of the lower left triangle (excluding corr to self)
+p_corr <- function(X) {
+	t1 <- suppressWarnings(cor(t(X),use="all.obs",method="pearson"))
+	t1[!lower.tri(t1)] <- NA
+	t1 <- sqrt(t1^2)
+	sum(t1,na.rm=T)/nrow(X)
+}
+
+## 1. get random set of three genes, 
+## 2. find average correlation
+## 3. replicate 1000 times
+## 4. get 95th quantile
+quantile(#4
+	replicate(#3
+		1000,
+		p_corr( #2 
+			myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),] #1 
+			)
+		)
+	,.95
+)
+
+
+### this is all cool, but it didn't do what I wanted...
+p_corr <- function(x) {
+	X <- cbind(
+		t(x[1:3]),
+		t(x[4:6]),
+		t(x[7:9]),
+		t(x[10:12]),
+		t(x[13:15]),
+		t(x[16:18]),
+		t(x[19:21]),
+		t(x[22:24])
+	)
+	t1 <- suppressWarnings(cor(X,use="all.obs",method="pearson"))
+	t1[!lower.tri(t1)] <- NA
+	t1 <- sqrt(t1^2)
+	sum(t1,na.rm=T)/(0.5*(length(x)^2-length(x)))
+}
+
+#set.seed=0.24
+
+quantile(
+	apply(
+		myfpkm[sample(1:length(myfpkm[,1]), 1000, replace=FALSE),]
+		,1
+		,function(x) {
+			p_corr(as.data.frame(t(x)))
+		}
+	),.95
+)
