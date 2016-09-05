@@ -43,19 +43,18 @@ all_results <- sqldf("
 # find genes which are differentially expressed in at least one condition (FC>2, p<=.05)
 all_results$test <- apply(all_results,1,function(x) {
 	as.logical(sum(
-		sqrt(x[1]^2)>1&x[8]<=0.05,
-		sqrt(x[2]^2)>1&x[9]<=0.05,
-		sqrt(x[3]^2)>1&x[10]<=0.05,
-		sqrt(x[4]^2)>1&x[11]<=0.05,
-		sqrt(x[5]^2)>1&x[12]<=0.05,
-		sqrt(x[6]^2)>1&x[13]<=0.05,
-		sqrt(x[7]^2)>1&x[14]<=0.05
+		sqrt(x[1]^2)>1&&x[8]<=0.05,
+		sqrt(x[2]^2)>1&&x[9]<=0.05,
+		sqrt(x[3]^2)>1&&x[10]<=0.05,
+		sqrt(x[4]^2)>1&&x[11]<=0.05,
+		sqrt(x[5]^2)>1&&x[12]<=0.05,
+		sqrt(x[6]^2)>1&&x[13]<=0.05,
+		sqrt(x[7]^2)>1&&x[14]<=0.05
 	   )) 
 	}
 )
 
 myfpkm <- myfpkm[,c(1,9,17,2,10,18,3,11,19,4,12,20,5,13,21,6,14,22,7,15,23,8,16,24)]
-
 
 ## calculate pearson corr matrix and return the mean value of the lower left triangle (excluding corr to self)
 p_corr <- function(X) {
@@ -95,9 +94,45 @@ all_results$test[is.na(all_results$test)] <- FALSE
 all_results$seed  <- c(sapply(1:(nrow(myfpkm)-2), function(i) get_seeds(myfpkm[i:(i+2),],all_results$test[i:(i+2)],cut_off)),FALSE,FALSE)
 sum(all_results$seed) # 1406 just over 11% - interesting, the data must be fairly "lumpy" (which is good) 
 all_results$extend  <- c(sapply(1:(nrow(myfpkm)-2), function(i) get_seeds(myfpkm[i:(i+2),],c(1,1,1),cut_off)),FALSE,FALSE)
-all_results$run <- c(F,F,sapply(3:(nrow(myfpkm)-2), function(i) (all_results$extend[i]&(	all_results$seed[i-1]|	all_results$seed[i-2]|	all_results$seed[i+1]|	all_results$seed[i+2]))),F,F)
-# that will do, anything else can be manually extended.
+all_results$extend  <-c(F,sapply(2:(nrow(myfpkm)-1), function(i) (all_results$extend[i]|(all_results$extend[i-1]&all_results$extend[i+1]))),F)
 
+get_clusters <- function(X,cut_off) {
+	counter <- 0
+ 	clusters <- list()
+ 	for (i in 1:nrow(X)) {
+ 		if(X$seed[i]) {
+ 			c_small <- rownames(X[i:(i+2),])
+ 			n=i-1
+ 			while(X$extend[n]) {
+ 				c_small <- c(c_small,rownames(X[n,]))	
+ 				n=n-1
+ 			}
+ 			n=i+1
+ 			while(X$extend[n]) {
+ 				c_small <- c(c_small,rownames(X[n+2,]))
+ 				n=n+1
+ 			}
+ 			counter <- counter+1
+ 			clusters[[counter]] <-c_small 
+ 		}
+ 	}
+ 	return(clusters)
+ }
+
+tl <- get_clusters(all_results,cut_off)
+tl <- lapply(tl,function(x) x[order(x,decreasing=F)])
+tl <- tl[!duplicated(tl)]
+
+length(tl[lapply(tl,length)>3]) # [1] 385
+length(tl[lapply(tl,length)>4]) # [1] 214
+length(tl[lapply(tl,length)>5]) # [1] 110
+length(tl[lapply(tl,length)>6]) # [1] 53
+length(tl[lapply(tl,length)>7]) # [1] 27
+length(tl[lapply(tl,length)>8]) # [1] 13
+length(tl[lapply(tl,length)>9]) # [1] 7
+length(tl[lapply(tl,length)>10])# [1] 3
+length(tl[lapply(tl,length)>11])# [1] 2
+length(tl[lapply(tl,length)>12])# [1] 1 "g5713" "g5714" "g5715" "g5716" "g5717" "g5718" "g5719" "g5720" "g5721" "g5722" "g5723" "g5724" "g5725"
 
 
 ### this is all cool, but it didn't do what I wanted...
