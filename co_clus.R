@@ -34,6 +34,7 @@ all_results <- sqldf("
 		join res8 r8 on r2.row_names=r8.row_names "
    , row.names=T
 )
+rownames(all_results) <- rownames(res2) # I'm pretty certain this could have been added to the abpve (r2.row_names)
 
 # find genes which are differentially expressed in at least one condition (FC>2, p<=.05)
 all_results$test <- apply(all_results,1,function(x) {
@@ -51,15 +52,17 @@ all_results$test <- apply(all_results,1,function(x) {
 
 myfpkm <- myfpkm[,c(1,9,17,2,10,18,3,11,19,4,12,20,5,13,21,6,14,22,7,15,23,8,16,24)]
 
+
 ## calculate pearson corr matrix and return the mean value of the lower left triangle (excluding corr to self)
 p_corr <- function(X) {
 	t1 <- suppressWarnings(cor(t(X),use="all.obs",method="pearson"))
 	t1[!lower.tri(t1)] <- NA
 	t1 <- sqrt(t1^2)
-	sum(t1,na.rm=T)/nrow(X)
+	sum(t1,na.rm=T)/(0.5*(nrow(X)^2-nrow(X)))
 }
 
 ## 1. get random set of three genes, 2. find average correlation 3. replicate 1000 times 4. get 95th quantile
+## not certain whether to use a cutoff per experiment or a global value - global value is going to be a lot easier
 cut_off_1 <-quantile(#4
 	replicate(#3
 		1000,
@@ -76,13 +79,28 @@ cut_off_5 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3
 cut_off_6 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),16:18])),.95)
 cut_off_7 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),19:21])),.95)
 cut_off_8 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),22:24])),.95)
+cut_off <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),])),.95)
 
-
-get_seeds <- function(X,cut_off,sig) {
+get_seeds <- function(X,cut_off=0.573) {
+	sig <- X[,ncol(X)]
+	X <- X[,-ncol(X)]
 	if(sum(sig)<=1) {return(FALSE)}	
 	if(p_corr(X)>cut_off) {return(TRUE)}
 	return(FALSE)
 }
+
+myfpkm <- myfpkm[order(rownames(myfpkm)),]
+all_results <- all_results[order(rownames(all_results)),]
+myfpkm$test <- all_results$test
+myfpkm$test[is.na(myfpkm$test)] <- FALSE
+
+test<-c()
+for (i in (1:(nrow(myfpkm)-2))) {
+	test <- c(test,get_seeds(myfpkm[i:(i+2),],cut_off))
+}
+myfpkm$seed <- c(test,FALSE,FALSE)
+
+
 
 
 ### this is all cool, but it didn't do what I wanted...
