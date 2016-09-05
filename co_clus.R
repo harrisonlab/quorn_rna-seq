@@ -11,6 +11,7 @@ res8 <- res.8
 # perform multiple joins with sqldf is easier than with merge (proably could do the same with plyr which is faster than sqldf, but I don't know the syntax)
 all_results <- sqldf("
 	select 
+		r2.row_names,
 		r2.log2FoldChange as r2_FC,
 		r3.log2FoldChange as r3_FC,
 		r4.log2FoldChange as r4_FC,
@@ -31,11 +32,14 @@ all_results <- sqldf("
 		join res5 r5 on r2.row_names=r5.row_names
 		join res6 r6 on r2.row_names=r6.row_names
 		join res7 r7 on r2.row_names=r7.row_names
-		join res8 r8 on r2.row_names=r8.row_names "
+		join res8 r8 on r2.row_names=r8.row_names"
    , row.names=T
 )
-rownames(all_results) <- rownames(res2) # I'm pretty certain this could have been added to the abpve (r2.row_names)
 
+ myfpkm <- myfpkm[order(as.numeric(sub("g","",rownames(myfpkm))),decreasing=F),]
+ all_results <- all_results[order(as.numeric(sub("g","",rownames(all_results))),decreasing=F),]
+ 
+ 
 # find genes which are differentially expressed in at least one condition (FC>2, p<=.05)
 all_results$test <- apply(all_results,1,function(x) {
 	as.logical(sum(
@@ -79,27 +83,20 @@ cut_off_5 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3
 cut_off_6 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),16:18])),.95)
 cut_off_7 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),19:21])),.95)
 cut_off_8 <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),22:24])),.95)
-cut_off <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=FALSE),])),.95)
+cut_off <- quantile(replicate(1000,p_corr(myfpkm[sample(1:length(myfpkm[,1]),3, replace=T),])),.95)
 
-get_seeds <- function(X,cut_off=0.573) {
-	sig <- X[,ncol(X)]
-	X <- X[,-ncol(X)]
+get_seeds <- function(X,sig,cut_off) {
 	if(sum(sig)<=1) {return(FALSE)}	
 	if(p_corr(X)>cut_off) {return(TRUE)}
 	return(FALSE)
 }
 
-myfpkm <- myfpkm[order(rownames(myfpkm)),]
-all_results <- all_results[order(rownames(all_results)),]
-myfpkm$test <- all_results$test
-myfpkm$test[is.na(myfpkm$test)] <- FALSE
-
-test<-c()
-for (i in (1:(nrow(myfpkm)-2))) {
-	test <- c(test,get_seeds(myfpkm[i:(i+2),],cut_off))
-}
-myfpkm$seed <- c(test,FALSE,FALSE)
-
+all_results$test[is.na(all_results$test)] <- FALSE
+all_results$seed  <- c(sapply(1:(nrow(myfpkm)-2), function(i) get_seeds(myfpkm[i:(i+2),],all_results$test[i:(i+2)],cut_off)),FALSE,FALSE)
+sum(all_results$seed) # 1406 just over 11% - interesting, the data must be fairly "lumpy" (which is good) 
+all_results$extend  <- c(sapply(1:(nrow(myfpkm)-2), function(i) get_seeds(myfpkm[i:(i+2),],c(1,1,1),cut_off)),FALSE,FALSE)
+all_results$run <- c(F,F,sapply(3:(nrow(myfpkm)-2), function(i) (all_results$extend[i]&(	all_results$seed[i-1]|	all_results$seed[i-2]|	all_results$seed[i+1]|	all_results$seed[i+2]))),F,F)
+# that will do, anything else can be manually extended.
 
 
 
