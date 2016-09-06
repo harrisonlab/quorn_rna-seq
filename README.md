@@ -83,9 +83,19 @@ get_primers.pl will return n nucleotides upstream of a feature in a gff file.
 grep -E [TGA].AGGCC brake_up1000.fa wc -l # 4797 
 grep -E '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)' brake_up1000.fa|wc -l # 5579
 grep -E [TGA].AGGCC brake_up1000.fa|grep -E  '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)' |wc -l # 2092
-grep -E -B1 [TGA].AGGCC brake_up1000.fa|grep -E -B1 '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)'|grep ">" >both.txt
-sed -i -e 's/>//' both.txt
+grep -E -B1 [TGA].AGGCC brake_up1000.fa|grep -E -B1 '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)'|grep ">" >set_both.txt
+sed -i -e 's/>//' set_both.txt
 ```
+The number of differentially expressed genes containing both promters per media is given below. 
+Media	DGE	set_both
+2793	1616	39
+F55	2280	153
+10170	4016	520
+MWT	6999	1058
+MOL	5012	635
+MKO	6988	1056
+TJ	4338	476
+Maybe of interest, given the number of genes in this set all the media show lower numbers of DE genes compared to what might be expected.
 
 ##Not implemented
 
