@@ -61,16 +61,16 @@ The method in dge_deseq.R was followed to produce list of diffrentially expresse
 ## Clusters
 co_clusters.R will find groups of n consecutive genes with expression correlation higher than the .95 quantile of n random genes (n set to 3 by default). Still in development, but will work after a fashion.
 For n = 3 and using correlation between all datasets (probably better to limit it to each experiment) 1406 clusters, just over 11% of total possible clusters have correlation higher than the .95% quantile
-cluster length 13	1
-cluster length 12	1
-cluster length 11	1
-cluster length 10	4
-cluster length 9	6
-cluster length 8	14
-cluster length 7	26
-cluster length 6	57
-cluster length 5	104
-cluster length 4	171
+cluster length 13|	1
+cluster length 12|	1
+cluster length 11|	1
+cluster length 10|	4
+cluster length 9|	6
+cluster length 8|	14
+cluster length 7|	26
+cluster length 6|	57
+cluster length 5|	104
+cluster length 4|	171
 
 
 ## promoter motif finder
