@@ -134,6 +134,20 @@ length(tl[lapply(tl,length)>10])# [1] 3
 length(tl[lapply(tl,length)>11])# [1] 2
 length(tl[lapply(tl,length)>12])# [1] 1 "g5713" "g5714" "g5715" "g5716" "g5717" "g5718" "g5719" "g5720" "g5721" "g5722" "g5723" "g5724" "g5725"
 
+process_func <- function(X,Y) {
+	X <- X[order(as.numeric(sub("g","",rownames(X))),decreasing=F),]
+	Y <- Y[order(as.numeric(sub("g","",rownames(Y))),decreasing=F),]
+	cut_off <- quantile(replicate(1000,p_corr(X[sample(1:nrow(X),3, replace=T),])),.95)
+	seed <- c(sapply(1:(nrow(X)-2), function(i) get_seeds(X[i:(i+2),],sqrt(Y[i:(i+2),2]^2)>1&Y[i:(i+2),6]<=0.05,cut_off)),FALSE,FALSE)
+	extend <- c(sapply(1:(nrow(X)-2), function(i) get_seeds(X[i:(i+2),],c(1,1,1),cut_off)),FALSE,FALSE)
+	extend <- c(F,sapply(2:(nrow(X)-1), function(i) (extend[i]|(extend[i-1]&extend[i+1]))),F)
+	df <- data.frame(seed=seed,extend=extend)
+	rownames(df) <- rownames(X)
+	tl <- get_clusters(df,cut_off) 
+	tl <- lapply(tl,function(x) x[order(x,decreasing=F)])
+	tl <- tl[!duplicated(tl)]
+}
+
 
 ### this is all cool, but it didn't do what I wanted...
 p_corr <- function(x) {
