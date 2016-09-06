@@ -58,6 +58,18 @@ Using braker gene models (cufflinks is still running after a couple of weeks)
 
 The method in dge_deseq.R was followed to produce list of diffrentially expressed braker gene models.
 
+## Clusters
+co_clusters.R will find groups of n consecutive genes with expression correlation higher than the .95 quantile of n random genes (n set to 3 by default). Still in development, but will work after a fashion.
+
+## promoter motif finder
+get_primers.pl will return n nucleotides upstream of a feature in a gff file.
+
+```shell
+# get 1000  nucleotides upstream of each gene in final_genes_Braker.gff
+./get_primer.pl contigs_unmasked.fa final_genes_Braker.gff 1000 gene >brake_up1000.fa
+#motif is GTGA...GTGA seperated by at most 8 nucleotides.
+grep -E -o -B1 GTGA.\{0,8\}GTGA brake_up1000.fa
+```
 
 ##Not implemented
 
