@@ -86,8 +86,6 @@ grep -E [TGA].AGGCC brake_up1000.fa|grep -E  '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)' 
 grep -E -B1 [TGA].AGGCC brake_up1000.fa|grep -E -B1 '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)'|grep ">" >both.txt
 sed -i -e 's/>//' both.txt
 ```
-1830 genes contain this motif in the 1000 bases upstream of the start of the gene
-
 
 ##Not implemented
 
