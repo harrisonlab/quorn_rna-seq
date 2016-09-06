@@ -60,6 +60,18 @@ The method in dge_deseq.R was followed to produce list of diffrentially expresse
 
 ## Clusters
 co_clusters.R will find groups of n consecutive genes with expression correlation higher than the .95 quantile of n random genes (n set to 3 by default). Still in development, but will work after a fashion.
+For n = 3 and using correlation between all datasets (probably better to limit it to each experiment) 1406 clusters, just over 11% of total possible clusters have correlation higher than the .95% quantile
+clusert length 13	1
+clusert length 12	1
+clusert length 11	1
+clusert length 10	4
+clusert length 9	6
+clusert length 8	14
+clusert length 7	26
+clusert length 6	57
+clusert length 5	104
+clusert length 4	171
+
 
 ## promoter motif finder
 get_primers.pl will return n nucleotides upstream of a feature in a gff file.
@@ -68,8 +80,14 @@ get_primers.pl will return n nucleotides upstream of a feature in a gff file.
 # get 1000  nucleotides upstream of each gene in final_genes_Braker.gff
 ./get_primer.pl contigs_unmasked.fa final_genes_Braker.gff 1000 gene >brake_up1000.fa
 #motif is GTGA...GTGA seperated by at most 8 nucleotides.
-grep -E -o -B1 GTGA.\{0,8\}GTGA brake_up1000.fa
+grep -E [TGA].AGGCC brake_up1000.fa wc -l # 4797 
+grep -E '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)' brake_up1000.fa|wc -l # 5579
+grep -E [TGA].AGGCC brake_up1000.fa|grep -E  '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)' |wc -l # 2092
+grep -E -B1 [TGA].AGGCC brake_up1000.fa|grep -E -B1 '(GTGA|TCAC)'.\{0,8\}'(GTGA|TCAC)'|grep ">" >both.txt
+sed -i -e 's/>//' both.txt
 ```
+1830 genes contain this motif in the 1000 bases upstream of the start of the gene
+
 
 ##Not implemented
 
