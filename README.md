@@ -61,16 +61,16 @@ The method in dge_deseq.R was followed to produce list of diffrentially expresse
 ## Clusters
 co_clusters.R will find groups of n consecutive genes with expression correlation higher than the .95 quantile of n random genes (n set to 3 by default). Still in development, but will work after a fashion.
 For n = 3 and using correlation between all datasets (probably better to limit it to each experiment) 1406 clusters, just over 11% of total possible clusters have correlation higher than the .95% quantile
-clusert length 13	1
-clusert length 12	1
-clusert length 11	1
-clusert length 10	4
-clusert length 9	6
-clusert length 8	14
-clusert length 7	26
-clusert length 6	57
-clusert length 5	104
-clusert length 4	171
+cluster length 13	1
+cluster length 12	1
+cluster length 11	1
+cluster length 10	4
+cluster length 9	6
+cluster length 8	14
+cluster length 7	26
+cluster length 6	57
+cluster length 5	104
+cluster length 4	171
 
 
 ## promoter motif finder
@@ -87,14 +87,16 @@ grep -E -B1 [TGA].AGGCC brake_up1000.fa|grep -E -B1 '(GTGA|TCAC)'.\{0,8\}'(GTGA|
 sed -i -e 's/>//' set_both.txt
 ```
 The number of differentially expressed genes containing both promters per media is given below. 
-Media	DGE	set_both
-2793	1616	39
-F55	2280	153
-10170	4016	520
-MWT	6999	1058
-MOL	5012	635
-MKO	6988	1056
-TJ	4338	476
+<table>
+<tr>Media	DGE	set_both</tr>
+<tr>2793	1616	39</tr>
+<tr>F55	2280	153</tr>
+<tr>10170	4016	520</tr>
+<tr>MWT	6999	1058</tr>
+<tr>MOL	5012	635</tr>
+<tr>MKO	6988	1056</tr>
+<tr>TJ	4338	476</tr>
+</table
 Maybe of interest, given the number of genes in this set all the media show lower numbers of DE genes compared to what might be expected.
 
 ##Not implemented
