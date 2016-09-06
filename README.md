@@ -87,16 +87,17 @@ grep -E -B1 [TGA].AGGCC brake_up1000.fa|grep -E -B1 '(GTGA|TCAC)'.\{0,8\}'(GTGA|
 sed -i -e 's/>//' set_both.txt
 ```
 The number of differentially expressed genes containing both promters per media is given below. 
-<table>
-<tr>Media	DGE	set_both</tr>
-<tr>2793	1616	39</tr>
-<tr>F55	2280	153</tr>
-<tr>10170	4016	520</tr>
-<tr>MWT	6999	1058</tr>
-<tr>MOL	5012	635</tr>
-<tr>MKO	6988	1056</tr>
-<tr>TJ	4338	476</tr>
-</table>
+
+Media|DGE|set_both
+---|---|---
+2793|1616|39
+F55|2280|153
+10170|4016|520
+MWT|6999|1058
+MOL|5012|635
+MKO|6988|1056
+TJ|4338|476
+
 Maybe of interest, given the number of genes in this set all the media show lower numbers of DE genes compared to what might be expected.
 
 ##Not implemented
