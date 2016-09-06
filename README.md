@@ -96,7 +96,7 @@ The number of differentially expressed genes containing both promters per media 
 <tr>MOL	5012	635</tr>
 <tr>MKO	6988	1056</tr>
 <tr>TJ	4338	476</tr>
-</table
+</table>
 Maybe of interest, given the number of genes in this set all the media show lower numbers of DE genes compared to what might be expected.
 
 ##Not implemented
