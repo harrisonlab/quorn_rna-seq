@@ -10,19 +10,6 @@ library(ggplot2)
 library(Biostrings)
 
 
-#===============================================================================
-#       Load functions
-#===============================================================================
-
-ddsCalc <- function(X, design=~condition,fitType="local") {
-  # function for creating a dds object. 
-	suppressPackageStartupMessages(require(DESeq2))
-	dds <- 	DESeqDataSetFromMatrix(X$countData,X$colData,design)
-	dds <- collapseReplicates(dds,groupby=dds$id)
-	sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds))
-	return(DESeq(dds, fitType="local",...))
-}
-
 #==========================================================================================
 #       Make featureCount compatible gene list form gff file
 #				featureCounts takes input in the format:
@@ -62,7 +49,10 @@ colData <- colData[,-1]
 colData$id <- factor(paste(colData$sample,colData$condition,sep=""))
 myobj <- list(countData=countData,colData=colData)
 
-dds <- ddsCalc(myobj)
+dds <- 	DESeqDataSetFromMatrix(myobj$countData,myobj$colData,~condition)
+sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds))
+dds <- collapseReplicates(dds,groupby=dds$id)
+dds <- DESeq(dds, fitType="local")
 
 alpha <- 0.01
 res.2 = results(dds, alpha=alpha,contrast=c("condition","RH1","RH2"))
