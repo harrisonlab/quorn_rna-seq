@@ -5,7 +5,6 @@
 
 library(Rsubread)
 library(limma)
-library(edgeR)
 library(DESeq2)
 library(ggplot2)
 library(Biostrings)
@@ -20,7 +19,7 @@ ddsCalc <- function(X, design=~condition,fitType="local") {
 	suppressPackageStartupMessages(require(DESeq2))
 	dds <- 	DESeqDataSetFromMatrix(X$countData,X$colData,design)
 	dds <- collapseReplicates(dds,groupby=dds$id)
-	sizeFactors(dds) <- calcFactors(dds)
+	sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds))
 	return(DESeq(dds, fitType="local",...))
 }
 
