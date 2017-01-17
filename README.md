@@ -5,6 +5,14 @@ Set quorn project file to:
 QUORN=~/projects/quorn
 ```
 
+## QC
+Qualtiy checking with fastQC (http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+```shell
+for FILE in $ARDERI/data/$RUN/fastq/*; do 
+	$ARDERI/metabarcoding_pipeline/scripts/PIPELINE.sh -c qcheck $FILE $ARDERI/data/$RUN/quality
+done
+```
+
 ## Trim data
 Trimming was performed with Trimmomatic (trim.sh, submit_trim.sh and truseq.fa should all be in same directory)
 Around 25% - 30% of reverse reads were discarded due to adapter contamination. Trimmomatic was set to capture (rather than dump) unpaired forward reads. SE workflow to follow...
