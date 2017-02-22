@@ -9,6 +9,17 @@ library(DESeq2)
 library(ggplot2)
 library(Biostrings)
 
+#==========================================================================================
+#       Read pre-prepared colData and countData
+##=========================================================================================
+colData <- read.table("colData",header=T,sep="\t")
+colData$SampleID <- sub("_RH.","",colData$SampleID) # I could change this in the file
+countData <- read.table("countData",sep="\t",header=T)
+row.names(countData) <- countData$Geneid # deleting the Geneid column header in the external file would fix this
+countData <- countData[-1]
+countData <- countData[,colData$SampleID]
+### go to DESeq2 analysis section
+
 
 #==========================================================================================
 #       Make featureCount compatible gene list form gff file
@@ -28,6 +39,12 @@ genes.pos <- as.data.frame(cbind(GeneID=sub(";","",sub("ID=","",genes[genes$feat
 targets <- readTargets() 
 fc <- featureCounts(files=targets$filename,annot.ext=genes.pos,useMetaFeatures=TRUE,allowMultiOverlap=TRUE,isPairedEnd=TRUE,nthreads=8,readExtension5=4,readExtension3=4,reportReads=TRUE)
 
+countData <- fc$counts
+colData <- targets
+rownames(colData) <- colData[,1]
+colData <- colData[,-1]
+
+
 #===============================================================================
 #       Data filtering
 # 			not necessary (according to the DESeq paper anyway)
@@ -41,11 +58,6 @@ fc <- featureCounts(files=targets$filename,annot.ext=genes.pos,useMetaFeatures=T
 #				significance below 0.01 will give slightly different results form setting
 #				alpha to 0.01
 #================================================================================
-
-countData <- fc$counts
-colData <- targets
-rownames(colData) <- colData[,1]
-colData <- colData[,-1]
 colData$id <- factor(paste(colData$sample,colData$condition,sep=""))
 myobj <- list(countData=countData,colData=colData)
 
