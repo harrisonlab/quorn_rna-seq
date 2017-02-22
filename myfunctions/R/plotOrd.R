@@ -1,3 +1,4 @@
+# ordination (PCA) plotter
 plotOrd <- function (	
 	obj, 
 	colData,
@@ -88,10 +89,3 @@ plotOrd <- function (
 	return(g)
 }
 
-#  theme(
-#	legend.title = element_blank(),
-#	legend.position="bottom", 
-#   	legend.direction="horizontal",
-#   	legend.key = element_rect(colour = NA),
-#	text=element_text(size=18)
-#  )
