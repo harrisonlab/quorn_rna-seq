@@ -61,6 +61,29 @@ done
 
 ```
 
+## NEW - Align to ref with STAR - 
+I prefer STAR now - it's performance is not so depedent on choice of input parameters.
+```shell
+# Create star index
+STAR --runMode genomeGenerate --genomeDir your_out_dir --genomeFastaFiles redgauntlet.fa --sjdbGTFfile redgauntlet.gff
+# align 
+STAR --genomeDir your_out_dir --outFileNamePrefix something --readFilesIn fastq_F fastq_R --outSAMtype SAM --runThreadN 16
+
+```
+
+
+
+## Count features
+Using featureCounts. 
+
+This can be done in R, but is slow and either imports all files or fails. Outside R each sample is counted seperately.
+
+```shell
+featureCounts -o output_file -a gff_file sam_files
+
+```
+
+
 ## DESeq2 analysis
 Using braker gene models (cufflinks is still running after a couple of weeks)
 
