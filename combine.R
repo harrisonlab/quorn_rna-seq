@@ -1,3 +1,10 @@
+#########################################################
+#							#
+#   concatenates a set of featureCounts files 		#
+#   into a single countData file for use with DESeq	#
+#							#
+#########################################################
+
 #install and load libraries		
 require(data.table)
 
