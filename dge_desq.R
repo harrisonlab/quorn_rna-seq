@@ -8,6 +8,8 @@ library(limma)
 library(DESeq2)
 library(ggplot2)
 library(Biostrings)
+library(devtools)
+load_all("myfunctions") # this contains various R scripts for plotting graphs
 
 #==========================================================================================
 #       Read pre-prepared colData and countData
@@ -23,9 +25,9 @@ countData <- countData[,colData$SampleID]
 
 #==========================================================================================
 #       Make featureCount compatible gene list form gff file
-#				featureCounts takes input in the format:
-#				gene_id	start	end	strand
-#				It can also use the gtf format - but call to featureCounts would need to be changed
+#		featureCounts takes input in the format:
+#		gene_id	start	end	strand
+#		It can also use the gtf format - but call to featureCounts would need to be changed
 ##=========================================================================================
 
 genes <- read.table("../DGE/gene_models.gff",header=F,sep="\t") ###augustus gene models
@@ -33,7 +35,7 @@ names(genes) <- c("chr","source","feature","start","end","score","strand","frame
 genes.pos <- as.data.frame(cbind(GeneID=sub(";","",sub("ID=","",genes[genes$feature=="gene",9])),chr=as.character(genes[genes$feature=="gene",1]),start=genes[genes$feature=="gene",4],end=genes[genes$feature=="gene",5],Strand=genes[genes$feature=="gene",7]))
 
 #===============================================================================
-#       Load data and count features
+#       Load data and count features - NOT REQUIRED FOR PREPEPARED countData
 #===============================================================================
 
 targets <- readTargets() 
@@ -44,19 +46,18 @@ colData <- targets
 rownames(colData) <- colData[,1]
 colData <- colData[,-1]
 
-
 #===============================================================================
 #       Data filtering
-# 			not necessary (according to the DESeq paper anyway)
+# 		not necessary (according to the DESeq paper anyway)
 #===============================================================================
 
 
 #===============================================================================
 #       DESeq2 analysis
-#				Set alpha to the required significance level. This also effects how
-#				DESeq calculated FDR - setting to 0.05 and then extracting results with a
-#				significance below 0.01 will give slightly different results form setting
-#				alpha to 0.01
+#			Set alpha to the required significance level. This also effects how
+#			DESeq calculated FDR - setting to 0.05 and then extracting results with a
+#			significance below 0.01 will give slightly different results form setting
+#			alpha to 0.01
 #================================================================================
 colData$id <- factor(paste(colData$sample,colData$condition,sep=""))
 myobj <- list(countData=countData,colData=colData)
@@ -157,40 +158,6 @@ clus <- function(X,clusters=10,m=1,name="hclust.pdf") {
 #===============================================================================
 #       Graphs
 #===============================================================================
-
-plotPCAWithLabels <- function (object, intgroup = "condition", ntop = 500,pcx = 1,pcy = 2, returnData = FALSE)
-{
-    suppressPackageStartupMessages(require(genefilter))
-    suppressPackageStartupMessages(require(ggplot2))
-    rv <- rowVars(assay(object))
-    select <- order(rv, decreasing = TRUE)[seq_len(min(ntop,
-        length(rv)))]
-    pca <- prcomp(t(assay(object)[select, ]))
-    percentVar <- pca$sdev^2/sum(pca$sdev^2)
-    if (!all(intgroup %in% names(object@colData))) {
-        stop("the argument 'intgroup' should specify columns of colData")
-    }
-    intgroup.df <- as.data.frame(object@colData[, intgroup,
-        drop = FALSE])
-    group <- if (length(intgroup) > 1) {
-        factor(apply(intgroup.df, 1, paste, collapse = " : "))
-    }
-    else {
-        colData(object)[[intgroup]]
-    }
-    d <- data.frame(PC1 = pca$x[, pcx], PC2 = pca$x[, pcy], media = group,
-        intgroup.df, name = object$label)
-    if (returnData) {
-        attr(d, "percentVar") <- percentVar[1:2]
-        return(d)
-    }
-
-    ggplot() +
-    geom_point(data=d, mapping=aes(x=PC1, y=PC2, colour=media),size=3) +
-    geom_text(data=d, mapping=aes(x=PC1, y=PC2, label=name,colour=media), size=3, vjust=2, hjust=0.5) +
-    xlab(paste0("PC",pcx,": ", round(percentVar[pcx] * 100), "% variance")) +
-    ylab(paste0("PC",pcy,": ", round(percentVar[pcy] * 100), "% variance"))
-}
 
 
 rld <- varianceStabilizingTransformation(dds,blind=F,fitType="local")
