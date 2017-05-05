@@ -89,7 +89,10 @@ The below will extract exon annotations and output the ninth column stipped of I
 grep exon final_genes_appended.gff3|awk -F"\t" '{gsub(/ID=/,"",$NF);gsub(/\..*/,"",$NF);print $NF,$1,$4,$5,$7}' OFS="\t" > $QUORN/counts/exons.SAF
 ```
 
-The RNA-seq pipeline can be used to run featureCounts
+The RNA-seq pipeline can be used to run featureCounts:
+PIPELINE.sh -c counts annotaions output_dir output_file sam/bam(s) [options]
+
+The below runs with 12 threads (-T 12), counts all multimapping reads (-M) and uses a SAF file for input (-F SAF)
 ```
 for D in $QUORN/aligned/treatment/WTCHG*; do
 OUTFILE=$(echo $D|awk -F"/" '{print $(NF)}').counts
@@ -101,11 +104,9 @@ $D/star_aligmentAligned.sortedByCoord.out.bam -T 12 -M -F SAF
 done
 ```
 
+### DESeq2 analysis
+Follow script 
 
-## DESeq2 analysis
-Using braker gene models (cufflinks is still running after a couple of weeks)
-
-The method in dge_deseq.R was followed to produce list of diffrentially expressed braker gene models.
 
 ## Clusters
 co_clusters.R will find groups of n consecutive genes with expression correlation higher than the .95 quantile of n random genes (n set to 3 by default). Still in development, but will work after a fashion.
