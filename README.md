@@ -70,9 +70,6 @@ STAR --runMode genomeGenerate --genomeDir your_out_dir --genomeFastaFiles redgau
 STAR --genomeDir your_out_dir --outFileNamePrefix something --readFilesIn fastq_F fastq_R --outSAMtype SAM --runThreadN 16
 
 ```
-
-
-
 ## Count features
 Using featureCounts. 
 
@@ -105,7 +102,7 @@ done
 ```
 
 ### DESeq2 analysis
-Follow script 
+Follow script new_DEG.R
 
 
 ## Clusters
