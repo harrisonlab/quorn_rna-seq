@@ -83,6 +83,24 @@ featureCounts -o output_file -a gff_file sam_files
 
 ```
 
+Can be useful to produce a SAF file from an input gff (as they are not always consistent)
+The below will extract exon annotations and output the ninth column stipped of ID= and anything after the first ".", then the first column (chromosome) and etc.
+```
+grep exon final_genes_appended.gff3|awk -F"\t" '{gsub(/ID=/,"",$NF);gsub(/\..*/,"",$NF);print $NF,$1,$4,$5,$7}' OFS="\t" > $QUORN/counts/exons.SAF
+```
+
+The RNA-seq pipeline can be used to run featureCounts
+```
+for D in $QUORN/align/treatment/WTCHG*; do
+OUTFILE=$(echo $D|awk -F"/" '{print $(NF)}').counts
+$QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c counts \
+$QUORN/counts/exons.SAF \
+$QUORN/counts \
+$OUTFILE \
+$D/star_aligmentAligned.sortedByCoord.out.bam -T 12 -M -f -F SAF
+done
+```
+
 
 ## DESeq2 analysis
 Using braker gene models (cufflinks is still running after a couple of weeks)
