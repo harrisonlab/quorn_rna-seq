@@ -91,13 +91,13 @@ grep exon final_genes_appended.gff3|awk -F"\t" '{gsub(/ID=/,"",$NF);gsub(/\..*/,
 
 The RNA-seq pipeline can be used to run featureCounts
 ```
-for D in $QUORN/align/treatment/WTCHG*; do
+for D in $QUORN/aligned/treatment/WTCHG*; do
 OUTFILE=$(echo $D|awk -F"/" '{print $(NF)}').counts
 $QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c counts \
 $QUORN/counts/exons.SAF \
 $QUORN/counts \
 $OUTFILE \
-$D/star_aligmentAligned.sortedByCoord.out.bam -T 12 -M -f -F SAF
+$D/star_aligmentAligned.sortedByCoord.out.bam -T 12 -M -F SAF
 done
 ```
 
