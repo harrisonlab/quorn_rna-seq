@@ -2,8 +2,6 @@
 #       Load libraries
 #===============================================================================
 
-#library(Rsubread)
-#library(limma)
 library(DESeq2)
 library("BiocParallel")
 register(MulticoreParam(12))
@@ -12,7 +10,7 @@ library(Biostrings)
 library(devtools)
 load_all("myfunctions") # this contains various R scripts for plotting graphs
 library(data.table)
-
+library(naturalsort)
 
 #===============================================================================
 #       Load features counts data 
@@ -38,16 +36,16 @@ write.table(m[,1:6,with=F],"genes.txt",sep="\t",quote=F,row.names=F)
 ##=========================================================================================
 
 colData <- read.table("colData",header=T,sep="\t")
-countData <- read.table("countData",sep="\t",header=T,row.names=1) # produced above, could just subset the data table
+# colData$condition <- rep(c("02780","02793","F55","10170","MWT","MOL","MKO","TJ"),3) # need to test this - will set columns to numbers 
+countData <- read.table("countData",sep="\t",header=T,row.names=1) # produced above, could just subset the data table countData <- m[,c(1,7:length(m),with=F]	
 countData <- countData[,colData$SampleID] # reorder countData columns to same order as colData rows
-
 
 #===============================================================================
 #       DESeq2 analysis
-#			Set alpha to the required significance level. This also effects how
-#			DESeq calculated FDR - setting to 0.05 and then extracting results with a
-#			significance below 0.01 will give slightly different results form setting
-#			alpha to 0.01
+#		Set alpha to the required significance level. This also effects how
+#		DESeq calculated FDR - setting to 0.05 and then extracting results with a
+#		significance below 0.01 will give slightly different results form setting
+#		alpha to 0.01
 #================================================================================
 
 dds <- 	DESeqDataSetFromMatrix(countData,colData,~1) 
@@ -75,15 +73,11 @@ lapply(sig.res,function(r) write.table(r,paste(strsplit(r@elementMetadata@listDa
 #===============================================================================
 #       FPKM
 #===============================================================================
-library(naturalsort)
-t1 <- counts(dds)
-t1 <- mygenes[rownames(t1)]
-rowRanges(dds) <- GRanges(t1@ranges@NAMES,t1@ranges)
-myfpkm <- fpkm(dds,robust=T)
-myfpkm <- cbind(myfpkm, t1@ranges@width)
-rm(t1)
-myfpkm <- myfpkm[naturalsort(rownames(myfpkm)),]
 
+rowRanges(dds) <- GRangesList(apply(m,1,function(x) GRanges(x[[1]],IRanges(1,as.numeric(x[[6]])),"+"))) # this is a bit slow
+myfpkm <- data.table(GeneID=m[,1],length=m[,6],fpkm(dds,robust=T))
+write.table(myfpkm,"fpkm.txt",quote=F,na="",sep="\t")
+	
 #===============================================================================
 #       Heirachical clustering
 #===============================================================================
@@ -107,7 +101,6 @@ clus <- function(X,clusters=10,m=1,name="hclust.pdf") {
 #===============================================================================
 #       Graphs
 #===============================================================================
-
 
 rld <- varianceStabilizingTransformation(dds,blind=F,fitType="local")
 rld$label <- dds$sample
