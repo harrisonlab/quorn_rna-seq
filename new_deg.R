@@ -60,6 +60,7 @@ alpha <- 0.01
 
 # calculate the differences - uses the "levels" of the condition factor as the third term for the contrast
 # res is a list object containing the DESeq results objects for each contrast
+# contrast=c("condition","RH1","RH2") etc. (the below just runs through all of the different sample types (excluding RH1))
 res <- lapply(seq(2,8), function(i) results(dds,alpha=alpha,contrast=c("condition","RH1",levels(dds$condition)[i])))
 
 # get, then order the significant results
@@ -74,7 +75,7 @@ lapply(sig.res,function(r) write.table(r,paste(strsplit(r@elementMetadata@listDa
 #       FPKM
 #===============================================================================
 
-rowRanges(dds) <- GRangesList(apply(m,1,function(x) GRanges(x[[1]],IRanges(1,as.numeric(x[[6]])),"+"))) # this is a bit slow
+rowRanges(dds) <- GRangesList(apply(m,1,function(x) GRanges(x[[1]],IRanges(1,as.numeric(x[[6]])),"+")))
 myfpkm <- data.table(GeneID=m[,1],length=m[,6],fpkm(dds,robust=T))
 write.table(myfpkm,"fpkm.txt",quote=F,na="",sep="\t")
 	
