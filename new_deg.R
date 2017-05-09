@@ -77,10 +77,17 @@ res.merged <- lapply(res,function(x) left_join(rownames_to_column(as.data.frame(
 sig.res <- lapply(res.merged, function(x) subset(x,padj<=alpha))
 sig.res <- lapply(sig.res,function(x) x[order(x$padj),])
 
+# sig in all conditions	
+test <- sig.res[[7]]	
+newtest <- lapply(seq(1:6), function(i) test<<-inner_join(sig.res[[i]],test,by="rowname"))
+newtest[[6]]$rowname
+all.sig <- lapply(sig.res,function(o) o[which(o$rowname%in%newtest[[6]]$rowname),])
+
 # write tables of results, and significant results
 lapply(seq(1:7),function(x) {
 	write.table(res.merged[[x]],paste(names(res.merged)[x],"merged.txt",sep="."),quote=F,na="",row.names=F,sep="\t")
 	write.table(sig.res[[x]],paste(names(sig.res)[x],"sig.merged.txt",sep="."),quote=F,na="",row.names=F,sep="\t")
+	write.table(all.sig[[x]],paste(names(all.sig)[x],"all.sig.merged.txt",sep="."),quote=F,na="",row.names=F,sep="\t")
 })	
 	
 	
