@@ -82,7 +82,9 @@ test <- sig.res[[7]]
 newtest <- lapply(seq(1:6), function(i) test<<-inner_join(sig.res[[i]],test,by="rowname"))
 newtest[[6]]$rowname
 all.sig <- lapply(sig.res,function(o) o[which(o$rowname%in%newtest[[6]]$rowname),])
-
+out <- all.sig[[1]][,c(1:2)]
+lapply(all.sig,function(o) out<<-cbind(out,o[,c(3,7)]))
+out <- cbind(out,all.sig[[1]][,8:16])
 # write tables of results, and significant results
 lapply(seq(1:7),function(x) {
 	write.table(res.merged[[x]],paste(names(res.merged)[x],"merged.txt",sep="."),quote=F,na="",row.names=F,sep="\t")
