@@ -85,6 +85,9 @@ all.sig <- lapply(sig.res,function(o) o[which(o$rowname%in%newtest[[6]]$rowname)
 out <- all.sig[[1]][,c(1:2)]
 lapply(all.sig,function(o) out<<-cbind(out,o[,c(3,7)]))
 out <- cbind(out,all.sig[[1]][,8:16])
+colnames(out)[3:16] <- c("FC_02793","P_02793","FC_F55","P_F55","FC_10170","P_10170","FC_MWT","P_MWT","FC_MOL","P_MOL","FC_MKO","P_MKO","FC_TJ","P_TJ")
+write.table(out,"all.sig.csv",sep=",",quote=F,na="",row.names=F)
+	
 # write tables of results, and significant results
 lapply(seq(1:7),function(x) {
 	write.table(res.merged[[x]],paste(names(res.merged)[x],"merged.txt",sep="."),quote=F,na="",row.names=F,sep="\t")
