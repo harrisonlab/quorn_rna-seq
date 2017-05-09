@@ -77,16 +77,16 @@ res.merged <- lapply(res,function(x) left_join(rownames_to_column(as.data.frame(
 sig.res <- lapply(res.merged, function(x) subset(x,padj<=alpha))
 sig.res <- lapply(sig.res,function(x) x[order(x$padj),])
 
-# sig in all conditions	
-test <- sig.res[[7]]	
-newtest <- lapply(seq(1:6), function(i) test<<-inner_join(sig.res[[i]],test,by="rowname"))
-newtest[[6]]$rowname
-all.sig <- lapply(sig.res,function(o) o[which(o$rowname%in%newtest[[6]]$rowname),])
-out <- all.sig[[1]][,c(1:2)]
-lapply(all.sig,function(o) out<<-cbind(out,o[,c(3,7)]))
-out <- cbind(out,all.sig[[1]][,8:16])
+	
+# merged  merged
+out <- res.merged[[1]][,c(1:2)]
+lapply(res.merged,function(o) out<<-cbind(out,o[,c(3,7)]))
+out <- cbind(out,res.merged[[1]][,8:16])
 colnames(out)[3:16] <- c("FC_02793","P_02793","FC_F55","P_F55","FC_10170","P_10170","FC_MWT","P_MWT","FC_MOL","P_MOL","FC_MKO","P_MKO","FC_TJ","P_TJ")
-write.table(out,"all.sig.csv",sep=",",quote=F,na="",row.names=F)
+write.table(out,"all.merged.csv",sep=",",quote=F,na="",row.names=F)
+
+# sig all
+write.table(subset(out,P_02793<=0.05&P_F55<=0.05&P_10170<=0.05&P_MWT<=0.05&P_MOL<=0.05&P_MKO<=0.05&P_TJ<=0.05),"all.sig.csv",sep=",",quote=F,na="",row.names=F)
 	
 # write tables of results, and significant results
 lapply(seq(1:7),function(x) {
