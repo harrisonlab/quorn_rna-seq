@@ -11,6 +11,7 @@ library(devtools)
 load_all("myfunctions") # this contains various R scripts for plotting graphs
 library(data.table)
 library(naturalsort)
+library(tibble)
 
 #===============================================================================
 #       Load features counts data 
@@ -32,7 +33,7 @@ write.table(m[,c(1,7:(ncol(m))),with=F],"countData",sep="\t",na="",quote=F,row.n
 write.table(m[,1:6,with=F],"genes.txt",sep="\t",quote=F,row.names=F) 
 
 #==========================================================================================
-#       Read pre-prepared colData and countData
+#       Read pre-prepared colData,  countData and annotations
 ##=========================================================================================
 
 colData <- read.table("colData",header=T,sep="\t")
@@ -40,6 +41,9 @@ colData <- read.table("colData",header=T,sep="\t")
 countData <- read.table("countData",sep="\t",header=T,row.names=1) # produced above, could just subset the data table countData <- m[,c(1,7:length(m),with=F]	
 countData <- countData[,colData$SampleID] # reorder countData columns to same order as colData rows
 
+annotations <- fread("WT_annotation.tsv")
+	
+	
 #===============================================================================
 #       DESeq2 analysis
 #		Set alpha to the required significance level. This also effects how
@@ -62,15 +66,24 @@ alpha <- 0.01
 # res is a list object containing the DESeq results objects for each contrast
 # contrast=c("condition","RH1","RH2") etc. (the below just runs through all of the different sample types (excluding RH1))
 res <- lapply(seq(2,8), function(i) results(dds,alpha=alpha,contrast=c("condition","RH1",levels(dds$condition)[i])))
-
+names(res) <- c("02793","F55","10170","MWT","MOL","MKO","TJ")
+		# RH2,   RH3,  RH4,    RH5,  RH6,  RH7,  RH8
+		#lapply(res,function(x) strsplit(x@elementMetadata@listData$description[2]," ")[[1]][8])
+	
+# merge results with annotations
+res.merged <- lapply(res,function(x) left_join(rownames_to_column(as.data.frame(x)),annotations,by=c("rowname"="query_id")))	
+	
 # get, then order the significant results
-sig.res <- lapply(res, function(r) subset(r,padj<=alpha))
-sig.res <- lapply(sig.res,function(r) r[order(r$padj),])
+sig.res <- lapply(res.merged, function(x) subset(x,padj<=alpha))
+sig.res <- lapply(sig.res,function(x) x[order(x$padj),])
 
 # write tables of results, and significant results
-lapply(res,function(r) write.table(r,paste(strsplit(r@elementMetadata@listData$description[2]," ")[[1]][8],"txt",sep="."),quote=F,na="",sep="\t"))
-lapply(sig.res,function(r) write.table(r,paste(strsplit(r@elementMetadata@listData$description[2]," ")[[1]][8],"sig.txt",sep="."),quote=F,na="",sep="\t"))
-
+lapply(seq(1:7),function(x) {
+	write.table(res.merged[[x]],paste(names(res.merged)[x],"merged.txt",sep="."),quote=F,na="",row.names=F,sep="\t")
+	write.table(sig.res[[x]],paste(names(sig.res)[x],"sig.merged.txt",sep="."),quote=F,na="",row.names=F,sep="\t")
+})	
+	
+	
 #===============================================================================
 #       FPKM
 #===============================================================================
