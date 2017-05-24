@@ -127,7 +127,8 @@ clus <- function(X,clusters=10,m=1,name="hclust.pdf") {
 #===============================================================================
 #       Graphs
 #===============================================================================
-
+	
+# PCA 1 vs 2 plot
 vst <- varianceStabilizingTransformation(dds,blind=F,fitType="local")
 levels(vst@colData$condition)[levels(vst@colData$condition)=="RH1"] <- "02780"
 levels(vst@colData$condition)[levels(vst@colData$condition)=="RH2"] <- "02793"
@@ -143,4 +144,15 @@ df <- t(data.frame(t(mypca$x)*mypca$percentVar))
 
 pdf("quorn.pca.pdf",height=8,width=8)
 plotOrd(df,vst@colData,design="condition",xlabel=PC1,ylabel=PC2, pointSize=3)
+dev.off()
+	
+# MA plots	
+pdf("MA_plots.pdf")
+lapply(res.merged,function(obj) {
+	with(obj,plot(log2FoldChange,log10(baseMean),pch=20, xlim=c(-5,5),
+		xlab=expression("Log"[2]*" Fold Change"),ylab=expression("Log"[10]*" Mean Expression")))
+	with(subset(obj, padj<.1 ), points(log2FoldChange, log10(baseMean), pch=20, col="#E69F00"))
+	with(subset(obj, abs(log2FoldChange)>1), points(log2FoldChange, log10(baseMean), pch=20, col="#56B4E9"))
+	with(subset(obj, padj<.1 & abs(log2FoldChange)>1), points(log2FoldChange, log10(baseMean), pch=20, col="#009E73"))
+})
 dev.off()
