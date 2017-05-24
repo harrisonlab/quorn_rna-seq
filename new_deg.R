@@ -128,9 +128,19 @@ clus <- function(X,clusters=10,m=1,name="hclust.pdf") {
 #       Graphs
 #===============================================================================
 
-rld <- varianceStabilizingTransformation(dds,blind=F,fitType="local")
-rld$label <- dds$sample
-rld$condition <- c("02780","02793","F55","10170","MWT","MOL","MKO","TJ","02780","02793","F55","10170","MWT","MOL","MKO","TJ","02780","02793","F55","10170","MWT","MOL","MKO","TJ")
-pdf("quorn.pca_2.pdf",height=10,width=10)
-plotPCAWithLabels(rld)
+vst <- varianceStabilizingTransformation(dds,blind=F,fitType="local")
+levels(vst@colData$condition)[levels(vst@colData$condition)=="RH1"] <- "02780"
+levels(vst@colData$condition)[levels(vst@colData$condition)=="RH2"] <- "02793"
+levels(vst@colData$condition)[levels(vst@colData$condition)=="RH3"] <- "F55"
+levels(vst@colData$condition)[levels(vst@colData$condition)=="RH4"] <- "10170"
+levels(vst@colData$condition)[levels(vst@colData$condition)=="RH5"] <- "MWT"
+levels(vst@colData$condition)[levels(vst@colData$condition)=="RH6"] <- "MOL"
+levels(vst@colData$condition)[levels(vst@colData$condition)=="RH7"] <- "MKO"
+levels(vst@colData$condition)[levels(vst@colData$condition)=="RH8"] <- "TJ"
+mypca <- prcomp(t(assay(vst)))
+mypca$percentVar <- mypca$sdev^2/sum(mypca$sdev^2)
+df <- t(data.frame(t(mypca$x)*mypca$percentVar))
+
+pdf("quorn.pca.pdf",height=8,width=8)
+plotOrd(df,vst@colData,design="condition",xlabel=PC1,ylabel=PC2, pointSize=3)
 dev.off()
