@@ -149,10 +149,10 @@ dev.off()
 # MA plots	
 pdf("MA_plots.pdf")
 lapply(res.merged,function(obj) {
-	with(obj,plot(log2FoldChange,log10(baseMean),pch=20, xlim=c(-5,5),
+	with(obj,plot(log2FoldChange,log10(baseMean),pch=20, xlim=c(-6,6),bty="n",
 		xlab=expression("Log"[2]*" Fold Change"),ylab=expression("Log"[10]*" Mean Expression")))
-	with(subset(obj, padj<.1 ), points(log2FoldChange, log10(baseMean), pch=20, col="#E69F00"))
+	with(subset(obj, padj<0.5 ), points(log2FoldChange, log10(baseMean), pch=20, col="#E69F00"))
 	with(subset(obj, abs(log2FoldChange)>1), points(log2FoldChange, log10(baseMean), pch=20, col="#56B4E9"))
-	with(subset(obj, padj<.1 & abs(log2FoldChange)>1), points(log2FoldChange, log10(baseMean), pch=20, col="#009E73"))
+	with(subset(obj, padj<0.05 & abs(log2FoldChange)>1), points(log2FoldChange, log10(baseMean), pch=20, col="#009E73"))
 })
 dev.off()
