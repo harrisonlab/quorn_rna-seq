@@ -43,6 +43,8 @@ countData <- read.table("countData",sep="\t",header=T,row.names=1) # produced ab
 countData <- countData[,colData$SampleID] # reorder countData columns to same order as colData rows
 
 annotations <- fread("WT_annotation.tsv")
+annotations$query_id <- sub("\\.t*","",annotations$query_id) # remove .t1 from annotation gene names
+
 	
 	
 #===============================================================================
@@ -61,7 +63,8 @@ design=~condition
 design(dds) <- design # could just replace the ~1 in the first step with the design, if you really wanted to...
 dds <- DESeq(dds,parallel=T)
 
-alpha <- 0.01
+# set the significance level for BH adjustment	    
+alpha <- 0.05
 
 # calculate the differences - uses the "levels" of the condition factor as the third term for the contrast
 # res is a list object containing the DESeq results objects for each contrast
@@ -81,13 +84,14 @@ sig.res <- lapply(sig.res,function(x) x[order(x$padj),])
 	
 # merged  merged
 out <- res.merged[[1]][,c(1:2)]
-lapply(res.merged,function(o) out<<-cbind(out,o[,c(3,7)]))
+invisible(lapply(res.merged,function(o) out<<-cbind(out,o[,c(3,7)])))
 out <- cbind(out,res.merged[[1]][,8:16])
 colnames(out)[3:16] <- c("FC_02793","P_02793","FC_F55","P_F55","FC_10170","P_10170","FC_MWT","P_MWT","FC_MOL","P_MOL","FC_MKO","P_MKO","FC_TJ","P_TJ")
 write.table(out,"all.merged.csv",sep=",",quote=F,na="",row.names=F)
 
-# sig all
-write.table(subset(out,P_02793<=0.05&P_F55<=0.05&P_10170<=0.05&P_MWT<=0.05&P_MOL<=0.05&P_MKO<=0.05&P_TJ<=0.05),"all.sig.csv",sep=",",quote=F,na="",row.names=F)
+# sig all		 
+all.sig <- subset(out,P_02793<=0.05&P_F55<=0.05&P_10170<=0.05&P_MWT<=0.05&P_MOL<=0.05&P_MKO<=0.05&P_TJ<=0.05)		 
+write.table(all.sig,"all.sig.csv",sep=",",quote=F,na="",row.names=F)
 	
 # write tables of results, and significant results
 lapply(seq(1:7),function(x) {
@@ -142,9 +146,9 @@ levels(vst@colData$condition)[levels(vst@colData$condition)=="RH8"] <- "TJ"
 mypca <- prcomp(t(assay(vst)))
 mypca$percentVar <- mypca$sdev^2/sum(mypca$sdev^2)
 df <- t(data.frame(t(mypca$x)*mypca$percentVar))
-
+   
 pdf("quorn.pca.pdf",height=8,width=8)
-plotOrd(df,vst@colData,design="condition",xlabel=PC1,ylabel=PC2, pointSize=3)
+plotOrd(df,vst@colData,design="condition",xlabel=PC1,ylabel=PC2, pointSize=3,textsize=14)
 dev.off()
 	
 # MA plots	
