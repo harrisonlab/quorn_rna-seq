@@ -17,7 +17,7 @@ library(tibble)
 #       Load features counts data 
 #===============================================================================
 
-#load tables into a list of data tables
+#load tables into a list of data tables - "." should point to counts directory, e.g. "counts/."
 qq <- lapply(list.files(".",".*.txt$",full.names=T,recursive=F),function(x) fread(x))
 
 # rename the sample columns (7th column in a feature counts table, saved as the path to the BAM file)
