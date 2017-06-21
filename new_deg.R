@@ -17,19 +17,19 @@ library(tibble)
 #       Load features counts data 
 #===============================================================================
 
-#load tables into a list of data tables - "." should point to counts directory, e.g. "counts/."
+# load tables into a list of data tables - "." should point to counts directory, e.g. "counts/."
 qq <- lapply(list.files(".",".*.txt$",full.names=T,recursive=F),function(x) fread(x))
 
 # rename the sample columns (7th column in a feature counts table, saved as the path to the BAM file)
 # in the below I'm saving the 8th ([[1]][8]) path depth (which was the informative folder name containg the BAM file)
 invisible(lapply(seq(1:length(qq)), function(i) colnames(qq[[i]])[7]<<-strsplit(colnames(qq[[i]])[7],"\\/")[[1]][8]))
 
-#merge the list of data tables into a single data table
+# merge the list of data tables into a single data table
 m <- Reduce(function(...) merge(..., all = T,by=c("Geneid","Chr","Start","End","Strand","Length")), qq)
 
-#output "countData"
+# output "countData"
 write.table(m[,c(1,7:(ncol(m))),with=F],"countData",sep="\t",na="",quote=F,row.names=F) 
-#output gene details
+# output gene details
 write.table(m[,1:6,with=F],"genes.txt",sep="\t",quote=F,row.names=F) 
 
 #==========================================================================================
