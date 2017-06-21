@@ -10,6 +10,7 @@ library(Biostrings)
 library(devtools)
 load_all("myfunctions") # this contains various R scripts for plotting graphs
 library(data.table)
+library(dplyr)
 library(naturalsort)
 library(tibble)
 
