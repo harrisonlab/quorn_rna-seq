@@ -104,6 +104,8 @@ done
 ### DESeq2 analysis
 Follow script new_DEG.R
 
+## Functional analysis
+GO funtional analysis - downloaded IPR to GO 17/06/17
 
 ## Clusters
 co_clusters.R will find groups of n consecutive genes with expression correlation higher than the .95 quantile of n random genes (n set to 3 by default). Still in development, but will work after a fashion.
