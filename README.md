@@ -111,7 +111,8 @@ IPR_2_GO (downloaded version 17/06/17)
 
 ```shell
 # produce simplfied ipr2go with GO_ID\tIPR_ID
-tail -n +7 iprtogo.txt|awk -F" " '{gsub(/InterPro:/, "",$1);print $1,$NF}' OFS="\t" > ipr2go.txt
+#tail -n +7 iprtogo.txt|awk -F" " '{gsub(/InterPro:/, "",$1);print $1,$NF}' OFS="\t" > ipr2go.txt # remove all annotation
+grep -oP "IPR\d*|GO:.*" iprtogo.txt|awk '{if($1~/^I/){i=$1;}else{print i,$0}}' OFS=";" > ipr2go.txt # retain go annotation
 # produce simplified annotawion with GENE_ID\tIPR_ID
 grep -oP "g\d*\.t1|IPR\d*" annotation.txt|awk '{if($1~/^g/){i=$1;}else{print i,$1}}' OFS="\t"|sort|uniq >gene_ipr.txt
 ```
@@ -121,10 +122,16 @@ grep -oP "g\d*\.t1|IPR\d*" annotation.txt|awk '{if($1~/^g/){i=$1;}else{print i,$
 library(data.table)
 library(dplyr)
 gipr <- fread("gene_ipr.txt",header=F)
-iprgo <- fread("ipr2go.txt",header=F)
+iprgo <- fread("ipr2go.txt",header=F,sep=";")
 output <- left_join(gipr,iprgo,by=c("V2"="V1"))
 output$V1 <- sub("\\.t1","",output$V1)
-write.table(output[complete.cases(output),c(1,3) ],"genes_go.txt",sep="\t",row.names=F,col.names=F,quote=F)
+output$V2.y <- sub("GO:","",output$V2.y)
+output<-cbind(a="xx",output[,1:2],b="",output[,4],c="","ISS","UNKNOWN","C",output[,3],"gene","taxon:5555","210617","GD")
+output <- output[complete.cases(output),]
+output$unique<-paste(output[,2],output[,5],sep="_")
+output <- output[!duplicated(output$unique),]
+
+write.table(output[,1:14],"genes_go.txt",sep="\t",row.names=F,col.names=F,quote=F)
 ```
 
 BinGO requires a gene2go file in a specific format, with
