@@ -148,16 +148,13 @@ mypca$percentVar <- mypca$sdev^2/sum(mypca$sdev^2)
 df <- t(data.frame(t(mypca$x)*mypca$percentVar))
    
 pdf("quorn.pca.pdf",height=8,width=8)
-plotOrd(df,vst@colData,design="condition",xlabel=PC1,ylabel=PC2, pointSize=3,textsize=14)
+plotOrd(df,vst@colData,design="condition",xlabel="PC1",ylabel="PC2", pointSize=3,textsize=14)
 dev.off()
 	
 # MA plots	
 pdf("MA_plots.pdf")
+				    
 lapply(res.merged,function(obj) {
-	with(obj,plot(log2FoldChange,log10(baseMean),pch=20, xlim=c(-6,6),bty="n",
-		xlab=expression("Log"[2]*" Fold Change"),ylab=expression("Log"[10]*" Mean Expression")))
-	with(subset(obj, padj<0.5 ), points(log2FoldChange, log10(baseMean), pch=20, col="#E69F00"))
-	with(subset(obj, abs(log2FoldChange)>1), points(log2FoldChange, log10(baseMean), pch=20, col="#56B4E9"))
-	with(subset(obj, padj<0.05 & abs(log2FoldChange)>1), points(log2FoldChange, log10(baseMean), pch=20, col="#009E73"))
+	plot_ma(obj[,c(1:5,7]),xlim=c(-8,8))
 })
 dev.off()
