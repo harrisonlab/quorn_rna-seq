@@ -105,7 +105,29 @@ done
 Follow script new_DEG.R
 
 ## Functional analysis
-GO funtional analysis - downloaded IPR to GO 17/06/17
+GO funtional analysis with BinGO
+Requires GO.obo for gene ontology (downloaded 22/06/17)
+IPR_2_GO (downloaded version 17/06/17)
+
+```shell
+# produce simplfied ipr2go with GO_ID\tIPR_ID
+tail -n +7 iprtogo.txt|awk -F" " '{gsub(/InterPro:/, "",$1);print $1,$NF}' OFS="\t" > ipr2go.txt
+# produce simplified annotawion with GENE_ID\tIPR_ID
+grep -oP "g\d*\.t1|IPR\d*" annotation.txt|awk '{if($1~/^g/){i=$1;}else{print i,$1}}' OFS="\t"|sort|uniq >gene_ipr.txt
+```
+
+```R
+# merge ipr2go with gene_ipr to output GENE_ID\tGO_ID
+library(data.table)
+library(dplyr)
+gipr <- fread("gene_ipr.txt",header=F)
+iprgo <- fread("ipr2go.txt",header=F)
+output <- left_join(gipr,iprgo,by=c("V2"="V1"))
+output$V1 <- sub("\\.t1","",output$V1)
+write.table(output[complete.cases(output),c(1,3) ],"genes_go.txt",sep="\t",row.names=F,col.names=F,quote=F)
+```
+
+BinGO requires a gene2go file in a specific format, with
 
 ## Clusters
 co_clusters.R will find groups of n consecutive genes with expression correlation higher than the .95 quantile of n random genes (n set to 3 by default). Still in development, but will work after a fashion.
