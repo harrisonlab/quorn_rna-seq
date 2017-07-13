@@ -18,8 +18,9 @@ library(tibble)
 #       Load features counts data 
 #===============================================================================
 
+
 # load tables into a list of data tables - "." should point to counts directory, e.g. "counts/."
-qq <- lapply(list.files(".",".*.txt$",full.names=T,recursive=F),function(x) fread(x))
+qq <- lapply(list.files(".",".*.txt$",full.names=T,recursive=F),function(x) fread(x) 
 
 # rename the sample columns (7th column in a feature counts table, saved as the path to the BAM file)
 # in the below I'm saving the 8th ([[1]][8]) path depth (which was the informative folder name containg the BAM file)
@@ -30,6 +31,7 @@ m <- Reduce(function(...) merge(..., all = T,by=c("Geneid","Chr","Start","End","
 
 # output "countData"
 write.table(m[,c(1,7:(ncol(m))),with=F],"countData",sep="\t",na="",quote=F,row.names=F) 
+	    
 # output gene details
 write.table(m[,1:6,with=F],"genes.txt",sep="\t",quote=F,row.names=F) 
 
@@ -39,6 +41,7 @@ write.table(m[,1:6,with=F],"genes.txt",sep="\t",quote=F,row.names=F)
 
 colData <- read.table("colData",header=T,sep="\t")
 # colData$condition <- rep(c("02780","02793","F55","10170","MWT","MOL","MKO","TJ"),3) # need to test this - will set columns to numbers 
+
 countData <- read.table("countData",sep="\t",header=T,row.names=1) # produced above, could just subset the data table countData <- m[,c(1,7:length(m),with=F]	
 countData <- countData[,colData$SampleID] # reorder countData columns to same order as colData rows
 
@@ -83,6 +86,8 @@ alpha <- 0.05
 # res is a list object containing the DESeq results objects for each contrast
 # contrast=c("condition","RH1","RH2") etc. (the below just runs through all of the different sample types (excluding RH1))
 res <- lapply(seq(2,8), function(i) results(dds,alpha=alpha,contrast=c("condition","RH1",levels(dds$condition)[i])))
+
+# rename columns to nutrient type	      
 names(res) <- c("02793","F55","10170","MWT","MOL","MKO","TJ")
 		# RH2,   RH3,  RH4,    RH5,  RH6,  RH7,  RH8
 		#lapply(res,function(x) strsplit(x@elementMetadata@listData$description[2]," ")[[1]][8])
@@ -90,8 +95,10 @@ names(res) <- c("02793","F55","10170","MWT","MOL","MKO","TJ")
 # merge results with annotations
 res.merged <- lapply(res,function(x) left_join(rownames_to_column(as.data.frame(x)),annotations,by=c("rowname"="query_id")))	
 	
-# get, then order the significant results
+# get significant results
 sig.res <- lapply(res.merged, function(x) subset(x,padj<=alpha))
+		  
+# reorder sig results (ascending)
 sig.res <- lapply(sig.res,function(x) x[order(x$padj),])
 
 	
@@ -156,17 +163,28 @@ levels(vst@colData$condition)[levels(vst@colData$condition)=="RH5"] <- "MWT"
 levels(vst@colData$condition)[levels(vst@colData$condition)=="RH6"] <- "MOL"
 levels(vst@colData$condition)[levels(vst@colData$condition)=="RH7"] <- "MKO"
 levels(vst@colData$condition)[levels(vst@colData$condition)=="RH8"] <- "TJ"
+
+# calculate PCs				    
 mypca <- prcomp(t(assay(vst)))
+				    
+# calculate variance for each PC
 mypca$percentVar <- mypca$sdev^2/sum(mypca$sdev^2)
+				    
+# create data frame of PCs x variance (sets PCA plot axes to same scale)
 df <- t(data.frame(t(mypca$x)*mypca$percentVar))
-   
+
+# set pdf 
 pdf("quorn.pca.pdf",height=8,width=8)
+
+# PCA/ordination plotting function 
 plotOrd(df,vst@colData,design="condition",xlabel="PC1",ylabel="PC2", pointSize=3,textsize=14)
+
 dev.off()
 	
 # MA plots	
 pdf("MA_plots.pdf")
-				    
+
+# plot_ma is an MA plotting function 				    
 lapply(res.merged,function(obj) {
 	plot_ma(obj[,c(1:5,7]),xlim=c(-8,8))
 })
