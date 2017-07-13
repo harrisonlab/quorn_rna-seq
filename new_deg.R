@@ -55,12 +55,25 @@ annotations$query_id <- sub("\\.t*","",annotations$query_id) # remove .t1 from a
 #		alpha to 0.01
 #================================================================================
 
+# create DESeq object from count and column data
 dds <- 	DESeqDataSetFromMatrix(countData,colData,~1) 
+	    
+# add grouping factor to identify technical replicates	    
 dds$groupby <- paste(dds$condition,dds$sample,sep="_")
-dds <- collapseReplicates(dds,groupby=dds$groupby) # replicates must use same library (or library size correction will go wonky)
-sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds)) # do after collapsing replicates
+
+# sum replicates (must use same library or library size correction will go wonky)	    
+dds <- collapseReplicates(dds,groupby=dds$groupby)
+	    
+# normalise counts for different library size (do after collapsing replicates)
+sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds)) 
+
+# define the DESeq 'GLM' model	    
 design=~condition
+
+# add design to DESeq object	    
 design(dds) <- design # could just replace the ~1 in the first step with the design, if you really wanted to...
+
+# Run the DESeq statistical model	    
 dds <- DESeq(dds,parallel=T)
 
 # set the significance level for BH adjustment	    
