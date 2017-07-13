@@ -56,9 +56,9 @@ annotations$query_id <- sub("\\.t*","",annotations$query_id) # remove .t1 from a
 #================================================================================
 
 dds <- 	DESeqDataSetFromMatrix(countData,colData,~1) 
-sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds))
 dds$groupby <- paste(dds$condition,dds$sample,sep="_")
-dds <- collapseReplicates(dds,groupby=dds$groupby)
+dds <- collapseReplicates(dds,groupby=dds$groupby) # replicates must use same library (or library size correction will go wonky)
+sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds)) # do after collapsing replicates
 design=~condition
 design(dds) <- design # could just replace the ~1 in the first step with the design, if you really wanted to...
 dds <- DESeq(dds,parallel=T)
