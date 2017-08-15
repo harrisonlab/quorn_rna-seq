@@ -8,7 +8,7 @@ register(MulticoreParam(12))
 library(ggplot2)
 library(Biostrings)
 library(devtools)
-load_all("myfunctions") # this contains various R scripts for plotting graphs
+load_all("~/pipelines/metabarcoding/myfunctions") # this contains various R scripts for plotting graphs
 library(data.table)
 library(dplyr)
 library(naturalsort)
