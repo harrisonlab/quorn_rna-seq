@@ -7,6 +7,8 @@ QUORN=~/projects/quorn
 
 ## QC
 Qualtiy checking with fastQC (http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+
+?? This needs updating - copied from another project  
 ```shell
 for FILE in $ARDERI/data/$RUN/fastq/*; do 
 	$ARDERI/metabarcoding_pipeline/scripts/PIPELINE.sh -c qcheck $FILE $ARDERI/data/$RUN/quality
