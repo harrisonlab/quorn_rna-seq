@@ -18,7 +18,6 @@ library(tibble)
 #       Load features counts data 
 #===============================================================================
 
-
 # load tables into a list of data tables - "." should point to counts directory, e.g. "counts/."
 qq <- lapply(list.files(".",".*.txt$",full.names=T,recursive=F),function(x) fread(x) 
 
@@ -45,8 +44,11 @@ colData <- read.table("colData",header=T,sep="\t")
 countData <- read.table("countData",sep="\t",header=T,row.names=1) # produced above, could just subset the data table countData <- m[,c(1,7:length(m),with=F]	
 countData <- countData[,colData$SampleID] # reorder countData columns to same order as colData rows
 
-annotations <- fread("WT_annotation.tsv")
-annotations$query_id <- sub("\\.t.*","",annotations$query_id) # remove .t1 from annotation gene names
+# read annotaions from file 26/05/17    
+annotations <- fread("WT_annotation_ncbi.tsv")
+
+# remove .tx from annotation gene names	    
+annotations$query_id <- sub("\\.t.*","",annotations$query_id) 
 	
 #===============================================================================
 #       DESeq2 analysis
