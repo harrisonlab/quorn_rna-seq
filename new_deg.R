@@ -47,8 +47,6 @@ countData <- countData[,colData$SampleID] # reorder countData columns to same or
 
 annotations <- fread("WT_annotation.tsv")
 annotations$query_id <- sub("\\.t.*","",annotations$query_id) # remove .t1 from annotation gene names
-
-	
 	
 #===============================================================================
 #       DESeq2 analysis
