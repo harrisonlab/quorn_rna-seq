@@ -46,7 +46,7 @@ countData <- read.table("countData",sep="\t",header=T,row.names=1) # produced ab
 countData <- countData[,colData$SampleID] # reorder countData columns to same order as colData rows
 
 annotations <- fread("WT_annotation.tsv")
-annotations$query_id <- sub("\\.t*","",annotations$query_id) # remove .t1 from annotation gene names
+annotations$query_id <- sub("\\.t.*","",annotations$query_id) # remove .t1 from annotation gene names
 
 	
 	
