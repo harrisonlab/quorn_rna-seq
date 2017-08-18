@@ -125,15 +125,16 @@ library(data.table)
 library(dplyr)
 gipr <- fread("gene_ipr.txt",header=F)
 iprgo <- fread("ipr2go.txt",header=F,sep=";")
-output <- left_join(gipr,iprgo,by=c("V2"="V1"))
-output$V1 <- sub("\\.t1","",output$V1)
-output$V2.y <- sub("GO:","",output$V2.y)
-output<-cbind(a="xx",output[,1:2],b="",output[,4],c="","ISS","UNKNOWN","C",output[,3],"gene","taxon:5555","210617","GD")
-output <- output[complete.cases(output),]
-output$unique<-paste(output[,2],output[,5],sep="_")
-output <- output[!duplicated(output$unique),]
-
-write.table(output[,1:14],"genes_go.txt",sep="\t",row.names=F,col.names=F,quote=F)
+output <- inner_join(gipr,iprgo,by=c("V2"="V1"))
+colnames(output) <- c("GENE_ID","IPR_ID","IPR_DESC","GO_DESC","GO_ID")
+output$GENE_ID <- sub("\\.t1.*","",output$GENE_ID)
+output$GO_DESC <- sub("GO:","",output$GO_DESC)
+# output<-cbind(a="xx",output[,1:2],b="",output[,4],c="","ISS","UNKNOWN","C",output[,3],"gene","taxon:5555","210617","GD")
+# output <- output[complete.cases(output),]
+# output$unique<-paste(output[,2],output[,5],sep="_")
+# output <- output[!duplicated(output$unique),]
+write.table(output,"gene_IPR_GO.txt",row.names=F,quote=F,sep="\t",na="")
+# write.table(output[,1:14],"genes_go.txt",sep="\t",row.names=F,col.names=F,quote=F)
 ```
 
 BinGO requires a gene2go file in a specific format, with
