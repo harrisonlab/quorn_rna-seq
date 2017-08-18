@@ -108,11 +108,11 @@ out <- res.merged[[1]][,c(1:2)]
 invisible(lapply(res.merged,function(o) out<<-cbind(out,o[,c(3,7)])))
 out <- cbind(out,res.merged[[1]][,8:16])
 colnames(out)[3:16] <- c("FC_02793","P_02793","FC_F55","P_F55","FC_10170","P_10170","FC_MWT","P_MWT","FC_MOL","P_MOL","FC_MKO","P_MKO","FC_TJ","P_TJ")
-write.table(out,"all_merged_18_08_17.csv",sep=",",quote=F,na="",row.names=F)
+write.table(out,"all_merged_18_08_17.tsv",sep="\t",quote=F,na="",row.names=F)
 
 # sig all		 
 all.sig <- subset(out,P_02793<=0.05&P_F55<=0.05&P_10170<=0.05&P_MWT<=0.05&P_MOL<=0.05&P_MKO<=0.05&P_TJ<=0.05)		 
-write.table(all.sig,"all_sig_18_08_17.csv",sep=",",quote=F,na="",row.names=F)
+write.table(all.sig,"all_sig_18_08_17.tsv",sep="\t",quote=F,na="",row.names=F)
 	
 # write tables of results, and significant results
 lapply(seq(1:7),function(x) {
