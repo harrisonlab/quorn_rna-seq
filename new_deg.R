@@ -90,7 +90,6 @@ res <- lapply(seq(2,8), function(i) results(dds,alpha=alpha,contrast=c("conditio
 # rename columns to nutrient type	      
 names(res) <- c("02793","F55","10170","MWT","MOL","MKO","TJ")
 		# RH2,   RH3,  RH4,    RH5,  RH6,  RH7,  RH8
-		#lapply(res,function(x) strsplit(x@elementMetadata@listData$description[2]," ")[[1]][8])
 	
 # merge results with annotations
 res.merged <- lapply(res,function(x) left_join(rownames_to_column(as.data.frame(x)),annotations,by=c("rowname"="query_id")))	
@@ -100,7 +99,6 @@ sig.res <- lapply(res.merged, function(x) subset(x,padj<=alpha))
 		  
 # reorder sig results (ascending)
 sig.res <- lapply(sig.res,function(x) x[order(x$padj),])
-
 	
 # merged  merged
 out <- res.merged[[1]][,c(1:2)]
