@@ -19,7 +19,7 @@ library(tibble)
 #===============================================================================
 
 # load tables into a list of data tables - "." should point to counts directory, e.g. "counts/."
-qq <- lapply(list.files(".",".*.txt$",full.names=T,recursive=F),function(x) fread(x) 
+qq <- lapply(list.files(".",".*.txt$",full.names=T,recursive=F),function(x) fread(x)) 
 
 # rename the sample columns (7th column in a feature counts table, saved as the path to the BAM file)
 # in the below I'm saving the 8th ([[1]][8]) path depth (which was the informative folder name containg the BAM file)
