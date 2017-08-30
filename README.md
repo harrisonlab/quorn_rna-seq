@@ -77,8 +77,8 @@ for R1 in $QUORN/filtered/*1.fq; do
  $prefix \
  $R1 \
  $R2 \
---outSAMmode None
-done
+ --outSAMmode None
+ done
 ```
 
 basic alignment
@@ -99,7 +99,6 @@ for R1 in $QUORN/filtered/*1.fq; do
  # --outFilterScoreMinOverLread 0.3 # unused parameter - useful for mapping short alignments
 done
 ```
-
 
 ## Count features
 Using featureCounts. 
