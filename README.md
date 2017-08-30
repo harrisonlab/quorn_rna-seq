@@ -50,7 +50,6 @@ done
 I prefer STAR now - it's performance is not so depedent on choice of input parameters.  
 An index must first be created
 ```shell
-# Create star index
 STAR \
 --runMode genomeGenerate \
 --genomeDir $QUORN/genome/STAR_illumina \
@@ -60,25 +59,48 @@ STAR \
 --sjdbGTFtagExonParentGene Parent
 ```
 
+Basic star alignment parameters:
+STAR --genomeDir your_out_dir --outFileNamePrefix something --readFilesIn fastq_F fastq_R --outSAMtype SAM --runThreadN 16
 
+Alignment was done using both 2-pass alignment (2-pass alignment and basic alignment) and basic alignment only.  
+For two pass, first pass finds extra splice junctions second pass uses these extra annotations for mapping.    
+For basic only alignment the below code was modified to comment out "--sjdbFileChrStartEnd $splice_list" (and remove the preceeding line continuation \))
+
+2-pass alignment
 ```shell
-# align 
-# STAR --genomeDir your_out_dir --outFileNamePrefix something --readFilesIn fastq_F fastq_R --outSAMtype SAM --runThreadN 16
-
 for R1 in $QUORN/filtered/*1.fq; do  
- R2=$(echo $R1|sed -e 's/_1\./_2\./');  
- prefix=$(echo $R1|awk -F"/" '{gsub(/_.*/,"",$NF);print $NF}');  
+ R2=$(echo $R1|sed -e 's/\.1\./\.2\./');  
+ prefix=$(echo $R1|awk -F"/" '{gsub(/\..*/,"",$NF);print $NF}');  
  $QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c star \
  $QUORN/genome/STAR_illumina \
  $QUORN/aligned \
  $prefix \
  $R1 \
  $R2 \
- --outSAMtype BAM Unsorted; 
- #--outFilterMatchNminOverLread 0.3 --outFilterScoreMinOverLread 0.3
+ --outStd SAM > /dev/null
 done
-
 ```
+
+basic alignment
+```shell
+splice_list=$(ls $QUORN/aligned/*.tab)
+for R1 in $QUORN/filtered/*1.fq; do  
+ R2=$(echo $R1|sed -e 's/\.1\./\.2\./');  
+ prefix=$(echo $R1|awk -F"/" '{gsub(/\..*/,"",$NF);print $NF}');  
+ $QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c star \
+ $QUORN/genome/STAR_illumina \
+ $QUORN/aligned \
+ $prefix \
+ $R1 \
+ $R2 \
+ --outSAMtype BAM SortedByCoordinate \
+ --sjdbFileChrStartEnd $splice_list; # not used for basic only alignment
+ # --outFilterMatchNminOverLread 0.3 # unused parameter - useful for mapping short alignments
+ # --outFilterScoreMinOverLread 0.3 # unused parameter - useful for mapping short alignments
+done
+```
+
+
 ## Count features
 Using featureCounts. 
 
