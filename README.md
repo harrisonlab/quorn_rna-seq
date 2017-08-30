@@ -81,7 +81,7 @@ for R1 in $QUORN/filtered/*1.fq; do
  done
 ```
 
-basic alignment
+basic alignment (with chimera detection)
 ```shell
 splice_list=$(ls $QUORN/junctions/*.tab)
 for R1 in $QUORN/filtered/*1.fq; do  
@@ -93,6 +93,7 @@ for R1 in $QUORN/filtered/*1.fq; do
  $prefix \
  $R1 \
  $R2 \
+ --chimSegmentMin 20 \
  --outSAMtype BAM SortedByCoordinate \
  --sjdbFileChrStartEnd $splice_list; # not used for basic only alignment
  # --outFilterMatchNminOverLread 0.3 # unused parameter - useful for mapping short alignments
