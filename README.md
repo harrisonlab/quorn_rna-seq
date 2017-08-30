@@ -73,17 +73,17 @@ for R1 in $QUORN/filtered/*1.fq; do
  prefix=$(echo $R1|awk -F"/" '{gsub(/\..*/,"",$NF);print $NF}');  
  $QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c star \
  $QUORN/genome/STAR_illumina \
- $QUORN/aligned \
+ $QUORN/junctions \
  $prefix \
  $R1 \
  $R2 \
- --outStd SAM > /dev/null
+--outSAMmode None
 done
 ```
 
 basic alignment
 ```shell
-splice_list=$(ls $QUORN/aligned/*.tab)
+splice_list=$(ls $QUORN/junctions/*.tab)
 for R1 in $QUORN/filtered/*1.fq; do  
  R2=$(echo $R1|sed -e 's/\.1\./\.2\./');  
  prefix=$(echo $R1|awk -F"/" '{gsub(/\..*/,"",$NF);print $NF}');  
