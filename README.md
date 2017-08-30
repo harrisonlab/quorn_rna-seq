@@ -1,17 +1,20 @@
 # quorn_rna-seq
 
-Set quorn project file to:
+Set quorn project file and linked to RNA-seq pipeline 
 ```shell
+
+ln -s path_to_quorn_folder/quorn ~/projects/quorn
+
 QUORN=~/projects/quorn
+
+ln -s ~/pipelines/RNA-seq $QUORN/RNA-seq_pipeline
 ```
 
 ## QC
 Qualtiy checking with fastQC (http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-
-?? This needs updating - copied from another project  
 ```shell
-for FILE in $ARDERI/data/$RUN/fastq/*; do 
-	$ARDERI/metabarcoding_pipeline/scripts/PIPELINE.sh -c qcheck $FILE $ARDERI/data/$RUN/quality
+for FILE in $QUORN/rna/*fastq.gz; do 
+	$QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c qcheck $FILE $QUORN/quality
 done
 ```
 
@@ -19,57 +22,61 @@ done
 Trimming was performed with Trimmomatic (trim.sh, submit_trim.sh and truseq.fa should all be in same directory)
 Around 25% - 30% of reverse reads were discarded due to adapter contamination. Trimmomatic was set to capture (rather than dump) unpaired forward reads. SE workflow to follow...
 
-
 ```shell
-counter=0
-for f in $QUORN/raw_rna/*.gz
-do
-	counter=$((counter+1))
-	if (( $counter % 2 == 0 )) 
-	then
-		R2=$f
-		$QUORN/scripts/trim.sh $R1 $R2 $QUORN/scripts 20 50
-	fi
-	R1=$f
+for R1 in $QUORN/rna/*_1.fastq.gz; do
+ R2=$(echo $R1|sed 's/\_1\.fastq/\_2\.fastq/')
+ $QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c trim \
+ $R1 \
+ $R2 \
+ $QUORN/trimmed \
+ $QUORN/RNA-seq_pipeline/scripts/truseq.fa \
+ 4
 done
 ```
 
 ## Filter data
 ```shell
-counter=0
-for f in $QUORN/trimmed/*.gz
-do
-	counter=$((counter+1))
-	if (( $counter % 2 == 0 )) 
-	then
-		R2=$f
-		S=$(echo $f|awk -F"/" '{print $NF}'|awk -F"_" '{print $1,$2,$3}' OFS="_")
-		$QUORN/scripts/bowtie.sh $R1 $R2 $QUORN/filtered/phix/phix $QUORN/filtered/$S 200 400
-	fi
-	R1=$f
+for R1 in $QUORN/trimmed/*_1.fq.gz; do
+ R2=$(echo $R1|sed 's/\_1\.fastq/\_2\.fastq/')
+ $QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c filter \
+ $QUORN/RNA-seq_pipeline/phix/phix \
+ $R1 $R2 \
+ $QUORN/filtered
 done
 ```
 
-## Align to ref with Tophat 
-(maybe update to Hisat2/Tophat3 (when available))
-Unpaired reads can be added to the tophat workflow
-```shell
 
-for f in ../filtered/*[1].fq; 
-do 
-	S=$(echo $f|awk -F"/" '{print $NF}'|awk -F"." '{print $1}')
-	$QUORN/scripts/tophat.sh $QUORN/filtered/${S}.1.fq $QUORN/filtered/${S}.2.fq $QUORN/filtered/${S}_1_SE.fq $QUORN/ref/venenatum $QUORN/filtered/$S 200 400  
-done
-
-```
-
-## NEW - Align to ref with STAR - 
-I prefer STAR now - it's performance is not so depedent on choice of input parameters.
+## Align to ref with STAR 
+I prefer STAR now - it's performance is not so depedent on choice of input parameters.  
+An index must first be created
 ```shell
 # Create star index
-STAR --runMode genomeGenerate --genomeDir your_out_dir --genomeFastaFiles redgauntlet.fa --sjdbGTFfile redgauntlet.gff
+STAR \
+--runMode genomeGenerate \
+--genomeDir $QUORN/genome/STAR_illumina \
+--genomeFastaFiles $QUORN/genome/Fven_A3-5_ncbi_WT_contigs_unmasked.fa \
+--sjdbGTFfile $QUORN/genome/Fven_A3-5_ncb_final_genes_appended_renamed.gff3 \
+--sjdbGTFtagExonParentTranscript Parent \
+--sjdbGTFtagExonParentGene Parent
+```
+
+
+```shell
 # align 
-STAR --genomeDir your_out_dir --outFileNamePrefix something --readFilesIn fastq_F fastq_R --outSAMtype SAM --runThreadN 16
+# STAR --genomeDir your_out_dir --outFileNamePrefix something --readFilesIn fastq_F fastq_R --outSAMtype SAM --runThreadN 16
+
+for R1 in $QUORN/filtered/*1.fq; do  
+ R2=$(echo $R1|sed -e 's/_1\./_2\./');  
+ prefix=$(echo $R1|awk -F"/" '{gsub(/_.*/,"",$NF);print $NF}');  
+ $QUORN/RNA-seq_pipeline/scripts/PIPELINE.sh -c star \
+ $QUORN/genome/STAR_illumina \
+ $QUORN/aligned \
+ $prefix \
+ $R1 \
+ $R2 \
+ --outSAMtype BAM Unsorted; 
+ #--outFilterMatchNminOverLread 0.3 --outFilterScoreMinOverLread 0.3
+done
 
 ```
 ## Count features
