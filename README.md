@@ -94,6 +94,7 @@ for R1 in $QUORN/filtered/*1.fq; do
  $R1 \
  $R2 \
  --chimSegmentMin 20 \
+ --chimOutType WithinBAM \
  --outSAMtype BAM SortedByCoordinate \
  --sjdbFileChrStartEnd $splice_list; # not used for basic only alignment
  # --outFilterMatchNminOverLread 0.3 # unused parameter - useful for mapping short alignments
