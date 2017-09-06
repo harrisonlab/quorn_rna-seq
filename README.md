@@ -47,7 +47,7 @@ done
 
 
 ## Align to ref with STAR 
-I prefer STAR now - it's performance is not so depedent on choice of input parameters.  
+I prefer STAR now - it's performance is not so depedent on choice of input parameters (compared to e.g. Bowtie2).  
 An index must first be created
 ```shell
 STAR \
@@ -62,7 +62,7 @@ STAR \
 Basic star alignment parameters:
 STAR --genomeDir your_out_dir --outFileNamePrefix something --readFilesIn fastq_F fastq_R --outSAMtype SAM --runThreadN 16
 
-Alignment was done using both 2-pass alignment (2-pass alignment and basic alignment) and basic alignment only.  
+Alignment was done using both 2-pass alignment (2-pass alignment and basic alignment) and basic alignment only (though only as I added the two-stage process later, no point in just doing the basic alignment, unless you <i>must</i> have results by tomorrow .  
 For two pass, first pass finds extra splice junctions second pass uses these extra annotations for mapping.    
 For basic only alignment the below code was modified to comment out "--sjdbFileChrStartEnd $splice_list" (and remove the preceeding line continuation \))
 
@@ -105,7 +105,7 @@ done
 ## Count features
 Using featureCounts. 
 
-This can be done in R, but is slow and either imports all files or fails. Outside R each sample is counted seperately.
+This can be done in R, but is slow with seqeuntial file import. Outside R each sample is counted seperately.
 
 ```shell
 featureCounts -o output_file -a gff_file sam_files
@@ -132,6 +132,13 @@ $OUTFILE \
 $D/star_aligmentAligned.sortedByCoord.out.bam -T 12 -M -F SAF
 done
 ```
+
+### isoform counting
+While featureCounts is perfectly capable of counting at the feature/exon level, it has no built-in statistical model for estimating likely isoforms. However the methods which can do this don't produce normal count data - therefore not compatible with DESeq2.
+Luckily (as I've just found out), there are tools available which can convert estimated counts to real counts, which can be used in later versions of DESeq (v1.11.23).
+https://f1000research.com/articles/4-1521/v2
+
+Update to come with implementation
 
 ### DESeq2 analysis
 Follow script new_DEG.R
