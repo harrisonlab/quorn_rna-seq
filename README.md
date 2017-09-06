@@ -141,7 +141,7 @@ https://f1000research.com/articles/4-1521/v2
 Update to come with implementation
 
 #### quantification using Salmon
-Salmon can run in two modes, psuedo mapping or alignmnet mode using a pre-aligned SAM/BAM. The BAM <i>must</i> be unsorted - aargh, and aligned to a transcriptome not genome -aargh<sup>2<\sup> 
+Salmon can run in two modes, psuedo mapping or alignmnet mode using a pre-aligned SAM/BAM. The BAM <i>must</i> be unsorted - aargh, and aligned to a transcriptome not genome -aargh<sup>2 
 
 
 
