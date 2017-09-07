@@ -133,7 +133,7 @@ $D/star_aligmentAligned.sortedByCoord.out.bam -T 12 -M -F SAF
 done
 ```
 
-### isoform counting
+### Isoform counting
 While featureCounts is perfectly capable of counting at the feature/exon level, it has no built-in statistical model for estimating likely isoforms. However the methods which can do this don't produce normal count data - therefore not compatible with DESeq2.
 Luckily (as I've just found out), there are tools available which can convert estimated counts to real counts, which can be used in later versions of DESeq (v1.11.23).
 https://f1000research.com/articles/4-1521/v2
@@ -141,7 +141,21 @@ https://f1000research.com/articles/4-1521/v2
 Update to come with implementation
 
 #### quantification using Salmon
-Salmon can run in two modes, psuedo mapping or alignmnet mode using a pre-aligned SAM/BAM. The BAM <i>must</i> be unsorted - aargh, and aligned to a transcriptome not genome -aargh<sup>2</sup> 
+Salmon can run in two modes, psuedo mapping or alignmnet mode using a pre-aligned SAM/BAM. The BAM <i>must</i> be unsorted - aargh, and aligned to a transcriptome not genome -aargh<sup>2</sup>  
+
+O.K. running Salmon with the filtered read files - it's fast...
+
+Test example
+```shell
+# Build index from transcript file
+salmon index -t ../Fven_A3-5_ncbi_final_genes_appended_renamed.cds.fasta -i SALMON_quasi
+
+salmon quant -i ../SALMON_quasi -l A  -1 WTCHG_258645_201.1.fq -2 WTCHG_258645_201.2.fq -o quasi_out_boot \
+--numBootstraps 1000 -p 16 --dumpEq --seqBias --gcBias --writeUnmappedNames --writeMappings=test.sam
+```
+For the above the first line contains required options (for PE reads). The second line includes some of the optional settings
+http://salmon.readthedocs.io/en/latest/index.html for all the options to salmon.
+
 
 
 
