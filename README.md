@@ -138,28 +138,27 @@ Could use the exons alignments from the STAR alignment then use DEXSeq to identi
 
 DEXSeq requires its own gtf file - they provide a python script to create it, but due to the mess of the gtf/gff "standard" it probably won't work.  
 
-Below is an exampe of a few lines from a typical GFF file
+Below is an exampe of a few lines from a typical GFF file  
 
-contig_1	AUGUSTUS	gene	1	625	0.61	-	.	ID=g1;
-contig_1	AUGUSTUS	mRNA	1	625	0.61	-	.	ID=g1.t1;Parent=g1
-contig_1	AUGUSTUS	CDS	1	625	0.61	-	0	ID=g1.t1.CDS1;Parent=g1.t1
-contig_1	AUGUSTUS	exon	1	625	.	-	.	ID=g1.t1.exon1;Parent=g1.t1;
-contig_1	AUGUSTUS	start_codon	623	625	.	-	0	Parent=g1.t1;
-contig_1	AUGUSTUS	gene	2887	5449	0.57	+	.	ID=g2;
-contig_1	AUGUSTUS	mRNA	2887	5449	0.57	+	.	ID=g2.t1;Parent=g2
-contig_1	AUGUSTUS	start_codon	2887	2889	.	+	0	Parent=g2.t1;
-contig_1	AUGUSTUS	CDS	2887	2901	0.57	+	0	ID=g2.t1.CDS1;Parent=g2.t1
-contig_1	AUGUSTUS	exon	2887	2901	.	+	.	ID=g2.t1.exon1;Parent=g2.t1;
-contig_1	AUGUSTUS	intron	2902	2958	0.57	+	.	Parent=g2.t1;
-contig_1	AUGUSTUS	CDS	2959	3208	0.57	+	0	ID=g2.t1.CDS2;Parent=g2.t1
-contig_1	AUGUSTUS	exon	2959	3208	.	+	.	ID=g2.t1.exon2;Parent=g2.t1;
-contig_1	AUGUSTUS	intron	3209	3260	1	+	.	Parent=g2.t1;
-contig_1	AUGUSTUS	CDS	3261	5449	1	+	2	ID=g2.t1.CDS3;Parent=g2.t1
-contig_1	AUGUSTUS	exon	3261	5449	.	+	.	ID=g2.t1.exon3;Parent=g2.t1;
-contig_1	AUGUSTUS	stop_codon	5447	5449	.	+	0	Parent=g2.t1;
-
-
-
+ | | | | | | | | | 
+---|---|---|---|---|---|---|---|---
+contig_1|AUGUSTUS|gene|1|625|0.61|-|.|ID=g1;
+contig_1|AUGUSTUS|mRNA|1|625|0.61|-|.|ID=g1.t1;Parent=g1
+contig_1|AUGUSTUS|CDS|1|625|0.61|-|0|ID=g1.t1.CDS1;Parent=g1.t1
+contig_1|AUGUSTUS|exon|1|625|.|-|.|ID=g1.t1.exon1;Parent=g1.t1;
+contig_1|AUGUSTUS|start_codon|623|625|.|-|0|Parent=g1.t1;
+contig_1|AUGUSTUS|gene|2887|5449|0.57|+|.|ID=g2;
+contig_1|AUGUSTUS|mRNA|2887|5449|0.57|+|.|ID=g2.t1;Parent=g2
+contig_1|AUGUSTUS|start_codon|2887|2889|.|+|0|Parent=g2.t1;
+contig_1|AUGUSTUS|CDS|2887|2901|0.57|+|0|ID=g2.t1.CDS1;Parent=g2.t1
+contig_1|AUGUSTUS|exon|2887|2901|.|+|.|ID=g2.t1.exon1;Parent=g2.t1;
+contig_1|AUGUSTUS|intron|2902|2958|0.57|+|.|Parent=g2.t1;
+contig_1|AUGUSTUS|CDS|2959|3208|0.57|+|0|ID=g2.t1.CDS2;Parent=g2.t1
+contig_1|AUGUSTUS|exon|2959|3208|.|+|.|ID=g2.t1.exon2;Parent=g2.t1;
+contig_1|AUGUSTUS|intron|3209|3260|1|+|.|Parent=g2.t1;
+contig_1|AUGUSTUS|CDS|3261|5449|1|+|2|ID=g2.t1.CDS3;Parent=g2.t1
+contig_1|AUGUSTUS|exon|3261|5449|.|+|.|ID=g2.t1.exon3;Parent=g2.t1;
+contig_1|AUGUSTUS|stop_codon|5447|5449|.|+|0|Parent=g2.t1;
 
 
 ### DESeq2 analysis
