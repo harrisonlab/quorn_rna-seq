@@ -138,9 +138,9 @@ Could use the exons alignments from the STAR alignment then use DEXSeq to identi
 
 DEXSeq requires its own gtf file - they provide a python script to create it, but due to the mess of the gtf/gff "standard" it probably won't work.  
 
-Below is an exampe of a few lines from a typical GFF file  
+Below is an exampe of a few lines from a typical GFF file  (ignore the header - git requires it)
 
- | | | | | | | | | 
+gff|gff|gff|gff|gff|gff|gff|gff|gff| 
 ---|---|---|---|---|---|---|---|---
 contig_1|AUGUSTUS|gene|1|625|0.61|-|.|ID=g1;
 contig_1|AUGUSTUS|mRNA|1|625|0.61|-|.|ID=g1.t1;Parent=g1
