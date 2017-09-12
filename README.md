@@ -157,6 +157,26 @@ For the above the first line contains required options (for PE reads). The secon
 http://salmon.readthedocs.io/en/latest/index.html for all the options to salmon.
 
 
+tximport is an R library which can convert salmon transcript "pseuod" counts (or other pseudo mapped counts) to gene counts. 
+First needs a mapping file of transcript to gene.
+```shell
+ awk -F"\t" '{c=$1;sub("\..*","",$1);print c,$1}' OFS="\t" quant.sf >trans2gene.txt
+```
+
+ tximport requires R v 3.3 to install via Bioconductor, otherwise can install from the binary 
+```R
+library(tximport)
+library(rjson)
+library(readr)
+library(DESeq2)
+tx2gene<-read.table("trans2gene.txt",header=T,sep="\t")
+txi.reps <- tximport("quant.sf",type="salmon",tx2gene=tx2gene,txOut=T)
+txi.genes <- summarizeToGene(txi.reps,tx2gene)
+dds<-DESeqDataSetFromTximport(txi.genes,data.frame(S="S1",C="H"),design=~1)
+sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds)
+```
+Good for measuring gene level DE derived from transcripts (DTE) - but what about isoforms (different transcript/exon usage - DTU/DEU)?
+... Got these the wrong way round STAR/featureCounts/DEXSeq of exons for isoform detection and quantification
 
 
 ### DESeq2 analysis
