@@ -134,49 +134,32 @@ done
 ```
 
 ### Isoform counting
-While featureCounts is perfectly capable of counting at the feature/exon level, it has no built-in statistical model for estimating likely isoforms. However the methods which can do this don't produce normal count data - therefore not compatible with DESeq2.
-Luckily (as I've just found out), there are tools available which can convert estimated counts to real counts, which can be used in later versions of DESeq (v1.11.23).
-https://f1000research.com/articles/4-1521/v2
+Could use the exons alignments from the STAR alignment then use DEXSeq to identify differential exon usage (DEU). This is probably the best way to go. 
 
-Update to come with implementation
+DEXSeq requires its own gtf file - they provide a python script to create it, but due to the mess of the gtf/gff "standard" it probably won't work.  
 
-#### quantification using Salmon
-Salmon can run in two modes, psuedo mapping or alignmnet mode using a pre-aligned SAM/BAM. The BAM <i>must</i> be unsorted - aargh, and aligned to a transcriptome not genome -aargh<sup>2</sup>  
+Below is an exampe of a few lines from a typical GFF file
 
-O.K. running Salmon with the filtered read files - it's fast...
+contig_1	AUGUSTUS	gene	1	625	0.61	-	.	ID=g1;
+contig_1	AUGUSTUS	mRNA	1	625	0.61	-	.	ID=g1.t1;Parent=g1
+contig_1	AUGUSTUS	CDS	1	625	0.61	-	0	ID=g1.t1.CDS1;Parent=g1.t1
+contig_1	AUGUSTUS	exon	1	625	.	-	.	ID=g1.t1.exon1;Parent=g1.t1;
+contig_1	AUGUSTUS	start_codon	623	625	.	-	0	Parent=g1.t1;
+contig_1	AUGUSTUS	gene	2887	5449	0.57	+	.	ID=g2;
+contig_1	AUGUSTUS	mRNA	2887	5449	0.57	+	.	ID=g2.t1;Parent=g2
+contig_1	AUGUSTUS	start_codon	2887	2889	.	+	0	Parent=g2.t1;
+contig_1	AUGUSTUS	CDS	2887	2901	0.57	+	0	ID=g2.t1.CDS1;Parent=g2.t1
+contig_1	AUGUSTUS	exon	2887	2901	.	+	.	ID=g2.t1.exon1;Parent=g2.t1;
+contig_1	AUGUSTUS	intron	2902	2958	0.57	+	.	Parent=g2.t1;
+contig_1	AUGUSTUS	CDS	2959	3208	0.57	+	0	ID=g2.t1.CDS2;Parent=g2.t1
+contig_1	AUGUSTUS	exon	2959	3208	.	+	.	ID=g2.t1.exon2;Parent=g2.t1;
+contig_1	AUGUSTUS	intron	3209	3260	1	+	.	Parent=g2.t1;
+contig_1	AUGUSTUS	CDS	3261	5449	1	+	2	ID=g2.t1.CDS3;Parent=g2.t1
+contig_1	AUGUSTUS	exon	3261	5449	.	+	.	ID=g2.t1.exon3;Parent=g2.t1;
+contig_1	AUGUSTUS	stop_codon	5447	5449	.	+	0	Parent=g2.t1;
 
-Test example
-```shell
-# Build index from transcript file
-salmon index -t ../Fven_A3-5_ncbi_final_genes_appended_renamed.cds.fasta -i SALMON_quasi
-
-salmon quant -i ../SALMON_quasi -l A  -1 WTCHG_258645_201.1.fq -2 WTCHG_258645_201.2.fq -o quasi_out_boot \
---numBootstraps 1000 -p 16 --dumpEq --seqBias --gcBias --writeUnmappedNames --writeMappings=test.sam
-```
-For the above the first line contains required options (for PE reads). The second line includes some of the optional settings
-http://salmon.readthedocs.io/en/latest/index.html for all the options to salmon.
 
 
-tximport is an R library which can convert salmon transcript "pseuod" counts (or other pseudo mapped counts) to gene counts. 
-First needs a mapping file of transcript to gene.
-```shell
- awk -F"\t" '{c=$1;sub("\..*","",$1);print c,$1}' OFS="\t" quant.sf >trans2gene.txt
-```
-
- tximport requires R v 3.3 to install via Bioconductor, otherwise can install from the binary 
-```R
-library(tximport)
-library(rjson)
-library(readr)
-library(DESeq2)
-tx2gene<-read.table("trans2gene.txt",header=T,sep="\t")
-txi.reps <- tximport("quant.sf",type="salmon",tx2gene=tx2gene,txOut=T)
-txi.genes <- summarizeToGene(txi.reps,tx2gene)
-dds<-DESeqDataSetFromTximport(txi.genes,data.frame(S="S1",C="H"),design=~1)
-sizeFactors(dds) <- sizeFactors(estimateSizeFactors(dds)
-```
-Good for measuring gene level DE derived from transcripts (DTE) - but what about isoforms (different transcript/exon usage - DTU/DEU)?
-... Got these the wrong way round STAR/featureCounts/DEXSeq of exons for isoform detection and quantification
 
 
 ### DESeq2 analysis
