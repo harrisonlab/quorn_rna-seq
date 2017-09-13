@@ -104,5 +104,6 @@ plotDEXSeq( dxr, "g6103", displayTranscripts=F, legend=TRUE, cex.axis=1.2, cex=1
 
 # plot everything (=< fdr)
 DEXSeqHTML( dxr, FDR=0.05, color=cbbPalette,path=".", BPPARAM=BPPARAM)
-	    
+## eurgh - the above outputs svg graphs. These can't be produced on the cluster due to the lack of X support (well I've never managed to get it working)
+# I've hacked the DEXSeq package to produce pdfs 	    
 	    
