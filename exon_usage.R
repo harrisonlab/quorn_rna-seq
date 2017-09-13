@@ -66,10 +66,11 @@ transcripts <- geneData$Transcriptid
 ##=========================================================================================
 
 ##### NOTE #####
-# estimateDispersions and testForDEU can both be parallelsed by adding 
+# estimateDispersions, testForDEU and estimateExonFoldChanges (steps in DEXSeq call) can be parallelsed by adding 
 # BPPARAM=BPPARAM
 # BUT parallisation did not work when I was tesing using MulticoreParam 		    
 # This is unfortunate as dispersion estimates may take hours to calculate
+# Worked for doing the html plotting though	    
 
 # combine technical replicates	    
 dds <- 	DESeqDataSetFromMatrix(countData[,-1],colData,~1)
@@ -102,6 +103,6 @@ pdf("test.pdf",width=8)
 plotDEXSeq( dxr, "g6103", displayTranscripts=F, legend=TRUE, cex.axis=1.2, cex=1.3, lwd=2 )	    
 
 # plot everything (=< fdr)
-DEXSeqHTML( dxr, FDR=0.05, color=cbbPalette,path=".")
+DEXSeqHTML( dxr, FDR=0.05, color=cbbPalette,path=".", BPPARAM=BPPARAM)
 	    
 	    
