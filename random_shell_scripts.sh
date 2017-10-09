@@ -13,3 +13,10 @@ awk '{if(!gsub(/">"/,"")) {$0=toupper($0);COUNT_GC=COUNT_GC+gsub(/G|C/,"");COUNT
 # -P(perl) -o(only matching) grep for a partial header in a text file. Second part returns matches to the header +1 line
 grep -Po "FGSG_\d*" a_list.txt|xargs -I HEADER grep -A 1 HEADER singled.fasta > a_list.fa
 
+### some USEARCH stuff
+# create a udb database from a transcriptome
+usearch -makeudb_usearch QUORN_transcriptome.fa -output QUORN_transcriptome.udb
+# local search example
+usearch -usearch_local a_list.fa -db QUORN_transcriptome.udb -id 0.7 -evalue 1e-25 -strand plus -blast6out results.out 
+# global seach example
+usearch -usearch_global a_list.fa -db QUORN_transcriptome.udb -id 0.7 -evalue 1e-25 -strand plus -blast6out results.out 
