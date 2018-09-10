@@ -54,7 +54,7 @@ STAR \
 --runMode genomeGenerate \
 --genomeDir $QUORN/genome/STAR_illumina \
 --genomeFastaFiles $QUORN/genome/Fven_A3-5_ncbi_WT_contigs_unmasked.fa \
---sjdbGTFfile $QUORN/genome/Fven_A3-5_ncb_final_genes_appended_renamed.gff3 \
+--sjdbGTFfile $QUORN/genome/Fven_A3-5_ncbi_final_genes_appended_renamed.gff3 \
 --sjdbGTFtagExonParentTranscript Parent \
 --sjdbGTFtagExonParentGene Parent
 ```
