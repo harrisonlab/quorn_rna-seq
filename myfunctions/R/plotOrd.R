@@ -57,7 +57,9 @@ plotOrd <- function (
 	g <- ggplot(data=d,aes(x=PC1, y=PC2))
 	g <- g + coord_fixed(ratio = 1, xlim = xlims, ylim = ylims, expand = TRUE)
 
-	g <- g + theme_classic_thin(textSize,textFont)
+	#g <- g + theme_classic_thin(textSize,textFont)
+	# theme_classic_thin is not included within the DESeq2 pipeline
+	g <- g + theme_classic(textSize,textFont)
 
 	if(!legend) {
 		g <- g + theme_classic(textSize,textFont) %+replace% theme(legend.position="none")
